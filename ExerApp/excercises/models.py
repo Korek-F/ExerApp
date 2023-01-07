@@ -96,3 +96,17 @@ class BlankText(ItemBase):
     @property
     def content_type(self):
         return "blank_text"
+
+class Hint(ItemBase):
+    content = models.TextField()
+
+    def isCorrect(self, answer):
+        return True 
+    @property
+    def correct_answer(self):
+        return self.content
+    @property
+    def content_type(self):
+        return "text"
+    def __str__(self):
+        return str(self.pk) +" "+self.content[:50]

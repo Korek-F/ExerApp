@@ -1,7 +1,7 @@
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
 from django.views import generic, View
-from .models import ExerciseSet, BlankText,Exercise, Text, Content
+from .models import ExerciseSet, BlankText,Exercise, Text, Content, Hint
 from django.template.loader import render_to_string
 from django.http import HttpResponseRedirect
 from django.contrib.contenttypes.models import ContentType
@@ -17,6 +17,8 @@ class ExerciseSetDetailView(View):
         exercise_set = get_object_or_404(ExerciseSet, pk=kwargs['set_id'])
         context = {'exercise_set': exercise_set}
         return render(request, 'excercises/excercise_set_page.html', context)
+
+
 
 class ExerciseSetEditView(View):
     def get(self, request, *args, **kwargs):
@@ -40,11 +42,15 @@ class ExerciseSetEditView(View):
                 if content_type=="Text":
                     content_item = Text.objects.create(content=request.POST[i])
                     cc = ContentType.objects.get_for_model(Text)
-                    content = Content.objects.create(exercise=current_ex, content_type=cc,object_id=content_item.id)
+                    Content.objects.create(exercise=current_ex, content_type=cc,object_id=content_item.id)
                 elif content_type=="Blank":
                     content_item = BlankText.objects.create(correct=request.POST[i])
                     cc = ContentType.objects.get_for_model(BlankText)
-                    content = Content.objects.create(exercise=current_ex, content_type=cc,object_id=content_item.id)
+                    Content.objects.create(exercise=current_ex, content_type=cc,object_id=content_item.id)
+                elif content_type=="Hint":
+                    content_item = Hint.objects.create(content=request.POST[i])
+                    cc = ContentType.objects.get_for_model(Hint)
+                    Content.objects.create(exercise=current_ex, content_type=cc,object_id=content_item.id)
                 
 
         return HttpResponseRedirect(request.path_info)

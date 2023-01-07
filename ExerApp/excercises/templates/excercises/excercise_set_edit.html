@@ -36,6 +36,7 @@
     <select id="content_type">
         <option> Text </option>
         <option> Blank </option>
+        <option> Hint </option>
     </select>
     <input type="text" id="content_content"/>
     <button onClick="add_content()">Add</button>
@@ -86,11 +87,14 @@
 
     const contentTypes = {
         'Text': 'text',
-        'Blank':'text'
+        'Blank':'text',
+        'Hint':'text',
     }
 
     const generateInputField = (contentType, contentValue, exercise_number, content_number) =>{
-        return `<input type="${contentTypes[contentType]}" 
+        return `
+        <small>${contentType}</small>
+        <input type="${contentTypes[contentType]}" 
         value="${contentValue}" 
         
         name="content-${contentType}-${exercise_number}-${content_number}" 
