@@ -5,6 +5,8 @@ from .models import ExerciseSet, BlankText,Exercise, Text, Content
 from django.template.loader import render_to_string
 from django.http import HttpResponseRedirect
 from django.contrib.contenttypes.models import ContentType
+from django.shortcuts import redirect
+
 
 def mainpage(request):
     return HttpResponse("Hello world!")
@@ -19,8 +21,10 @@ class ExerciseSetDetailView(View):
 class ExerciseSetEditView(View):
     def get(self, request, *args, **kwargs):
         exercise_set = get_object_or_404(ExerciseSet, pk=kwargs['set_id'])
+        
         context = {'exercise_set': exercise_set,  
         'count':len(exercise_set.exercise_set.all())}
+        
         return render(request,'excercises/excercise_set_edit.html',context)
     
     def post(self, request, *args, **kwargs):
@@ -90,3 +94,8 @@ class ExerciseSetCheckView(View):
         context = {'checked_answers': checked_answers,"correct_ratio":correct_ratio}
         return render(request,'excercises/excercise_set_check.html',context)
 
+class ExerciseDeleteView(View):
+    def post(self, request, set_id, exercise_id):
+        exercise = get_object_or_404(Exercise, pk=exercise_id)
+        exercise.delete()
+        return redirect('excercise_set_edit_view', set_id=set_id)

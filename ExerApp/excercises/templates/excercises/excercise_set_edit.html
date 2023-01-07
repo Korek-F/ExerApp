@@ -16,6 +16,10 @@
            <span style="color:gray;"> {{content.item.correct_answer}} </span>
         {% endif %}
     {%endfor%}
+    <form action="{% url 'excercise_delete_view' exercise_set.id exercise.id %}" method="POST" style="display: inline;">
+        {% csrf_token %}
+        <input type="submit"  value="Delete" />
+    </form>
     <br />
 {%endfor%}
 <hr />
