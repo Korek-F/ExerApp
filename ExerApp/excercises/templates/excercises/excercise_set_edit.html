@@ -1,0 +1,98 @@
+{% extends "excercises/base.html" %}
+{% block content %}
+
+<h1>{{exercise_set.name}} </h1>
+<h2>Edit</h2>
+
+
+
+
+{%for exercise in exercise_set.exercise_set.all%}
+    {{ forloop.counter }}. 
+    {%for content in exercise.content_set.all%}
+        {% if content.item.content_type == "text" %}
+            {{content.item.correct_answer}}
+        {% else %}
+           <span style="color:gray;"> {{content.item.correct_answer}} </span>
+        {% endif %}
+    {%endfor%}
+    <br />
+{%endfor%}
+<hr />
+<form id="new_exercises" method="POST" action="{% url 'excercise_set_edit_view' exercise_set.id %}"> 
+    {% csrf_token %}
+
+    <button id="save_exercise_btn">Save</button>
+</form>
+<div id="add_window" style="display:none"> 
+    
+    <div id="exercise_preview"> 
+        {{count|add:1}}. 
+    </div>
+    <select id="content_type">
+        <option> Text </option>
+        <option> Blank </option>
+    </select>
+    <input type="text" id="content_content"/>
+    <button onClick="add_content()">Add</button>
+    <br />
+    <button onClick="save_exercise()">Add exercise</button>
+</div> 
+
+<button onClick="open_add_window(true)" id="add_window_button"> Add </button>
+
+<script>
+    const add_window = document.getElementById("add_window")
+    const add_window_button = document.getElementById("add_window_button")
+    const content_type = document.getElementById("content_type")
+    const content_content = document.getElementById("content_content")
+    let excercise_count = {{count}}+1
+    const new_exercises_box = document.getElementById("new_exercises")
+
+    const exercise_preview = document.getElementById("exercise_preview")
+    
+    let current_content = 0
+
+    const save_exercise_btn = document.getElementById("save_exercise_btn")
+
+    const save_exercise = () =>{
+        new_exercises_box.innerHTML+=exercise_preview.innerHTML+ "<br />"
+        excercise_count+=1
+        exercise_preview.innerHTML = `${excercise_count}. `
+        current_content = 0
+    }
+
+    
+    const add_content = () => {
+        exercise_preview.innerHTML += 
+        generateInputField(content_type.value, content_content.value, excercise_count, current_content)
+        content_content.value= ""
+        current_content += 1
+    }
+
+    const open_add_window = (open) =>{
+        if(open){
+            add_window.style.display="block"
+            add_window_button.style.display="none"
+        }else{
+            add_window.style.display="none"
+            add_window_button.style.display="block"
+        }
+    }
+
+    const contentTypes = {
+        'Text': 'text',
+        'Blank':'text'
+    }
+
+    const generateInputField = (contentType, contentValue, exercise_number, content_number) =>{
+        return `<input type="${contentTypes[contentType]}" 
+        value="${contentValue}" 
+        
+        name="content-${contentType}-${exercise_number}-${content_number}" 
+        />`
+    }
+
+</script>
+
+{% endblock %}
