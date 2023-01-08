@@ -1,4 +1,3 @@
-from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
 from django.views import generic, View
 from .models import ExerciseSet, BlankText,Exercise, Text, Content, Hint
@@ -8,15 +7,14 @@ from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import redirect
 
 
-def mainpage(request):
-    return HttpResponse("Hello world!")
-
-
-class ExerciseSetDetailView(View):
+class AllExercisesSets(View):
     def get(self, request, *args, **kwargs):
-        exercise_set = get_object_or_404(ExerciseSet, pk=kwargs['set_id'])
-        context = {'exercise_set': exercise_set}
-        return render(request, 'excercises/excercise_set_page.html', context)
+        exercises_sets = ExerciseSet.objects.all()
+        context = {'exercises_sets': exercises_sets}
+        return render(request, 'excercises/all_excercises_sets_page.html', context)
+
+
+
 
 
 
@@ -68,11 +66,11 @@ class ExerciseSetCheckView(View):
         correct_items = []
         wrong_items = {}
         for i in request.POST:
-            if i.startswith('answer'):
+            if i.startswith('answer_blank'):
                 obj_id = int(i.split("_")[2])
-                obj = get_object_or_404(BlankText, pk=obj_id)
+                obj = get_object_or_404(Content, pk=obj_id).item
                 answer = request.POST[i]
-                if obj.isCorrect(answer):
+                if obj.is_correct(answer):
                     correct_items.append(obj)
                 else:
                     wrong_items[obj]=answer

@@ -3,6 +3,12 @@
 
 <h1>{{exercise_set.name}} </h1>
 <h2>Learn</h2>
+<h3>Number of points to achieve: {{exercise_set.number_of_points}}</h3>
+
+<a class="btn btn-primary" href="{% url 'excercise_set_edit_view' exercise_set.id %}">
+    Edit</a> 
+
+    <br />
 
 
 <form method="POST" action="{% url 'excercise_set_check_view' exercise_set.id%}">
@@ -11,10 +17,8 @@
 {%for exercise in exercise_set.exercise_set.all%}
     {{ forloop.counter }}. 
     {%for content in exercise.content_set.all%}
+        {{content.render}}
 
-        {% with item=content.item %}
-            {{item.render}}
-        {% endwith %}
         
     {%endfor%}
     <br />

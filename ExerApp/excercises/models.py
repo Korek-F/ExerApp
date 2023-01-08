@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.template.loader import render_to_string
-
+from django.urls import reverse
 # Create your models here.
 
 
@@ -18,6 +18,10 @@ class ExerciseSet(models.Model):
 
     def __str__(self):
         return str(self.pk)+ " " +self.name
+
+    def get_absolute_url(self):
+        return reverse("excercise_set_learn_view", kwargs={"set_id": self.pk})
+    
 
 class Exercise(models.Model):
     exercise_set = models.ForeignKey("ExerciseSet", on_delete=models.CASCADE)
@@ -37,11 +41,15 @@ class Exercise(models.Model):
 class Content(models.Model):
     exercise = models.ForeignKey("Exercise",  on_delete=models.CASCADE)
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE,
-    limit_choices_to={'model__in':('text','blanktext')})
+    limit_choices_to={'model__in':('text','blanktext', 'hint')})
     object_id = models.PositiveIntegerField()
     item = GenericForeignKey('content_type', 'object_id')
 
-  
+    def render(self):
+        return render_to_string(
+            f'excercises/content/{self.item.content_type}.html',
+            {'item':self.item, 'content':self}
+        )
 
     def __str__(self):
         return str(self.pk)+" "+ str(self.item)
@@ -54,19 +62,13 @@ class ItemBase(models.Model):
         abstract = True
        
 
-    def render(self):
-        return render_to_string(
-            f'excercises/content/{self._meta.model_name}.html',
-            {'item':self}
-        )
-    
 
     
 
 class Text(ItemBase):
     content = models.TextField()
 
-    def isCorrect(self, answer):
+    def is_correct(self, answer):
         return True 
     
     @property
@@ -86,7 +88,7 @@ class BlankText(ItemBase):
     def __str__(self):
         return str(self.pk) +" "+self.correct[:50]
 
-    def isCorrect(self, answer):
+    def is_correct(self, answer):
         return self.correct.lower() == answer.lower()  
     
     @property
@@ -100,7 +102,7 @@ class BlankText(ItemBase):
 class Hint(ItemBase):
     content = models.TextField()
 
-    def isCorrect(self, answer):
+    def is_correct(self, answer):
         return True 
     @property
     def correct_answer(self):
