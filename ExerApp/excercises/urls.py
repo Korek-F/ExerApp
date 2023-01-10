@@ -11,4 +11,7 @@ urlpatterns = [
 
     path('exercise-set/<int:set_id>/exercise-delete/<int:exercise_id>', 
     views.ExerciseDeleteView.as_view(), name="excercise_delete_view"),
+
+    path('exercise-set/create/', 
+    views.ExerciseSetCreationView.as_view(), name="excercise_set_create_view"),
 ]

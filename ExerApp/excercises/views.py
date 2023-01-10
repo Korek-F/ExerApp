@@ -5,7 +5,7 @@ from django.template.loader import render_to_string
 from django.http import HttpResponseRedirect
 from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import redirect
-
+from .forms import ExerciseSetCreationForm
 
 class AllExercisesSets(View):
     def get(self, request, *args, **kwargs):
@@ -103,3 +103,21 @@ class ExerciseDeleteView(View):
         exercise = get_object_or_404(Exercise, pk=exercise_id)
         exercise.delete()
         return redirect('excercise_set_edit_view', set_id=set_id)
+
+
+class ExerciseSetCreationView(View):
+    def get(self, request):
+        form = ExerciseSetCreationForm()
+        context = {'form':form}
+        return render(request, 'excercises/exercise_set_create.html',context)
+    
+    def post(self, request):
+        form = ExerciseSetCreationForm(request.POST or None)
+        context={}
+        if form.is_valid():
+            obj = form.save()
+            context["message"]="Created succesfully!"
+            context["object"] = obj
+            return render(request, 'excercises/partials/exercise_set_create_succesful.html', context)
+            
+        return render(request, 'excercises/exercise_set_create.html',context)

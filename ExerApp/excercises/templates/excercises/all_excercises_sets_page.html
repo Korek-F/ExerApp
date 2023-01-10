@@ -3,6 +3,10 @@
 
 <h1>All exercise sets</h1>
 {%for exercise_set in exercises_sets%}
-    <a href="{{exercise_set.get_absolute_url}}" >{{exercise_set.name}}</a>
+    <a href="{{exercise_set.get_absolute_url}}" >{{exercise_set.name}}</a><br />
 {%endfor%}
+<br />
+<a class="btn btn-primary" 
+href="{% url 'excercise_set_create_view' %}">
+    Create new exercise set</a> 
 {% endblock %}

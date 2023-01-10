@@ -1,0 +1,15 @@
+{% extends "excercises/base.html" %}
+{%load crispy_forms_tags %}
+{% block content %}
+
+<h1>Create exercise set </h1>
+<form hx-post='.'>
+{% csrf_token %} 
+<div class='mb-3'>
+{{form|crispy}}
+</div>
+<input type='submit' class="btn btn-primary" value="Create" />
+</form>
+
+
+{% endblock %}
