@@ -21,37 +21,37 @@ class AllExercisesSets(View):
 class ExerciseSetEditView(View):
     def get(self, request, *args, **kwargs):
         exercise_set = get_object_or_404(ExerciseSet, pk=kwargs['set_id'])
-        
         context = {'exercise_set': exercise_set,  
         'count':len(exercise_set.exercise_set.all())}
-        
         return render(request,'excercises/excercise_set_edit.html',context)
     
     def post(self, request, *args, **kwargs):
         exercise_set = get_object_or_404(ExerciseSet, pk=kwargs['set_id'])
+        context = {'exercise_set': exercise_set}
+        
         current_ex_number = -1
         current_ex = None
         for i in request.POST:
             if i.startswith("content"):
-                _, content_type,ex_number,content_number = i.split("-")
+                _, content_type,ex_number = i.split("-")[:3]
+
                 if current_ex_number !=ex_number:
                     current_ex = Exercise.objects.create(exercise_set=exercise_set)
                     current_ex_number =ex_number
+
                 if content_type=="Text":
                     content_item = Text.objects.create(content=request.POST[i])
                     cc = ContentType.objects.get_for_model(Text)
-                    Content.objects.create(exercise=current_ex, content_type=cc,object_id=content_item.id)
                 elif content_type=="Blank":
                     content_item = BlankText.objects.create(correct=request.POST[i])
                     cc = ContentType.objects.get_for_model(BlankText)
-                    Content.objects.create(exercise=current_ex, content_type=cc,object_id=content_item.id)
-                elif content_type=="Hint":
+                else:
                     content_item = Hint.objects.create(content=request.POST[i])
                     cc = ContentType.objects.get_for_model(Hint)
-                    Content.objects.create(exercise=current_ex, content_type=cc,object_id=content_item.id)
-                
 
-        return HttpResponseRedirect(request.path_info)
+                Content.objects.create(exercise=current_ex, content_type=cc,object_id=content_item.id)
+        
+        return render(request, 'excercises/partials/exercise_edit_form.html', context)
 
 class ExerciseSetLearnView(View):
     def get(self, request, *args, **kwargs):
@@ -62,7 +62,7 @@ class ExerciseSetLearnView(View):
 class ExerciseSetCheckView(View):
     def post(self, request, *args, **kwargs):
         exercise_set = get_object_or_404(ExerciseSet, pk=kwargs['set_id'])
-
+        
         correct_items = []
         wrong_items = {}
         for i in request.POST:
@@ -96,13 +96,17 @@ class ExerciseSetCheckView(View):
             checked_answers.append(checked_exercise)
         correct_ratio = (len(correct_items)/exercise_set.number_of_points)*100
         context = {'checked_answers': checked_answers,"correct_ratio":correct_ratio}
+
         return render(request,'excercises/excercise_set_check.html',context)
 
 class ExerciseDeleteView(View):
-    def post(self, request, set_id, exercise_id):
-        exercise = get_object_or_404(Exercise, pk=exercise_id)
-        exercise.delete()
-        return redirect('excercise_set_edit_view', set_id=set_id)
+    def post(self, request, set_id):
+        exercise_set = get_object_or_404(ExerciseSet, pk=set_id)
+        context = {'exercise_set': exercise_set}
+        if request.POST.get("delete_id"):
+            get_object_or_404(Exercise, pk=request.POST.get("delete_id")).delete()
+
+        return render(request, 'excercises/partials/exercise_edit_form.html', context)
 
 
 class ExerciseSetCreationView(View):

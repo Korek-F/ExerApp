@@ -7,3 +7,4 @@ class ExerciseSetCreationForm(forms.ModelForm):
     class Meta:
         model = ExerciseSet
         fields = ['name']
+    

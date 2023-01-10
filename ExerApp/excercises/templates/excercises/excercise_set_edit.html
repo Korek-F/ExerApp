@@ -6,7 +6,7 @@
 
 
 
-
+<div id="exercise_delete_form" > 
 {%for exercise in exercise_set.exercise_set.all%}
     {{ forloop.counter }}. 
     {%for content in exercise.content_set.all%}
@@ -16,58 +16,69 @@
            <span style="color:gray;"> {{content.item.correct_answer}} </span>
         {% endif %}
     {%endfor%}
-    <form action="{% url 'excercise_delete_view' exercise_set.id exercise.id %}" method="POST" style="display: inline;">
+
+    <form hx-post="{% url 'excercise_delete_view' exercise_set.id %}" 
+    hx-target="#exercise_delete_form"
+     style="display: inline;">
         {% csrf_token %}
-        <input type="submit"  value="Delete" />
+        <input type="hidden" name="delete_id" value="{{exercise.id}}" />
+        <input type="submit" value="Delete" />
     </form>
+
     <br />
 {%endfor%}
+</div>
+
+
+
+
 <hr />
-<form id="new_exercises" method="POST" action="{% url 'excercise_set_edit_view' exercise_set.id %}"> 
+
+
+<form id="new_exercises" 
+    hx-post="{% url 'excercise_set_edit_view' exercise_set.id %}"
+    hx-target="#exercise_delete_form"
+> 
     {% csrf_token %}
+    <div id="exercise_preview"> 
+        Preview: 
+    </div>
 
     <button id="save_exercise_btn">Save</button>
 </form>
-<div id="add_window" style="display:none"> 
-    
-    <div id="exercise_preview"> 
-        {{count|add:1}}. 
-    </div>
-    <select id="content_type">
-        <option> Text </option>
-        <option> Blank </option>
-        <option> Hint </option>
-    </select>
-    <input type="text" id="content_content"/>
-    <button onClick="add_content()">Add</button>
-    <br />
-    <button onClick="save_exercise()">Add exercise</button>
-</div> 
 
-<button onClick="open_add_window(true)" id="add_window_button"> Add </button>
+        
+<select id="content_type">
+    <option> Text </option>
+    <option> Blank </option>
+    <option> Hint </option>
+</select>
+<input type="text" id="content_content"/>
+<button onClick="add_content()">Add field</button>
+<br />
+
+
+
+
+
+
+
 
 <script>
-    const add_window = document.getElementById("add_window")
-    const add_window_button = document.getElementById("add_window_button")
     const content_type = document.getElementById("content_type")
     const content_content = document.getElementById("content_content")
-    let excercise_count = {{count}}+1
-    const new_exercises_box = document.getElementById("new_exercises")
-
     const exercise_preview = document.getElementById("exercise_preview")
-    
-    let current_content = 0
-
     const save_exercise_btn = document.getElementById("save_exercise_btn")
 
-    const save_exercise = () =>{
-        new_exercises_box.innerHTML+=exercise_preview.innerHTML+ "<br />"
-        excercise_count+=1
-        exercise_preview.innerHTML = `${excercise_count}. `
-        current_content = 0
-    }
+    let current_content = 0
+    let excercise_count = {{count}}+1
 
-    
+   
+    document.addEventListener('htmx:afterRequest', function() {
+        current_content = 0
+        excercise_count+=1
+        exercise_preview.innerHTML = "Preview: "
+    });
     const add_content = () => {
         exercise_preview.innerHTML += 
         generateInputField(content_type.value, content_content.value, excercise_count, current_content)
@@ -75,28 +86,11 @@
         current_content += 1
     }
 
-    const open_add_window = (open) =>{
-        if(open){
-            add_window.style.display="block"
-            add_window_button.style.display="none"
-        }else{
-            add_window.style.display="none"
-            add_window_button.style.display="block"
-        }
-    }
-
-    const contentTypes = {
-        'Text': 'text',
-        'Blank':'text',
-        'Hint':'text',
-    }
-
     const generateInputField = (contentType, contentValue, exercise_number, content_number) =>{
         return `
-        <small>${contentType}</small>
-        <input type="${contentTypes[contentType]}" 
+        <small>${contentType}: </small><span>${contentValue}</span>
+        <input type="hidden" 
         value="${contentValue}" 
-        
         name="content-${contentType}-${exercise_number}-${content_number}" 
         />`
     }
