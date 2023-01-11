@@ -3,6 +3,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.template.loader import render_to_string
 from django.urls import reverse
+import random
 # Create your models here.
 
 
@@ -32,7 +33,7 @@ class Exercise(models.Model):
     def number_of_points(self):
         points = 0
         for i in self.content_set.all():
-            if i.item.content_type =="blank_text":
+            if i.item.content_type in ["blank_text",'abcd']:
                 points+=1
         return points
     
@@ -41,7 +42,7 @@ class Exercise(models.Model):
 class Content(models.Model):
     exercise = models.ForeignKey("Exercise",  on_delete=models.CASCADE)
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE,
-    limit_choices_to={'model__in':('text','blanktext', 'hint')})
+    limit_choices_to={'model__in':('text','blanktext', 'hint','abcd')})
     object_id = models.PositiveIntegerField()
     item = GenericForeignKey('content_type', 'object_id')
 
@@ -112,3 +113,33 @@ class Hint(ItemBase):
         return "text"
     def __str__(self):
         return str(self.pk) +" "+self.content[:50]
+
+
+class ABCD(ItemBase):
+    # This field contais answers in following pattern
+    # Good_answer//Bad_answer//bad_answer//...
+    # Example
+    # Question: The capitol of Poland is ____ 
+    # Answers_field:    Warsaw//Cracow//Radom
+    answers = models.CharField(max_length=255)
+
+    def is_correct(self, answer):
+        return self.answers.split("//")[0]==answer 
+
+    @property
+    def get_answers_to_render(self):
+        answers = self.answers.split("//") 
+        random.shuffle(answers)
+        print(answers)
+        return answers
+
+    @property
+    def correct_answer(self):
+        return self.answers.split("//")[0]
+
+    @property
+    def content_type(self):
+        return "abcd"
+    
+    def __str__(self):
+        return str(self.pk) +" "+self.answers[:50]

@@ -1,0 +1,5 @@
+<select name="answer_abcd_{{content.id}}" >
+    {% for answer in content.item.get_answers_to_render%}
+        <option>{{answer}}</option>
+    {% endfor %}
+</select>
