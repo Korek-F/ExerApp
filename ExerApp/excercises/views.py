@@ -92,7 +92,10 @@ class ExerciseSetCheckView(View):
             checked_answers.append(checked_exercise)
 
         correct_ratio = (len(correct_items)/exercise_set.number_of_points)*100
-        context = {'checked_answers': checked_answers,"correct_ratio":correct_ratio}
+        context = {
+            'exercise_set':exercise_set,
+            'checked_answers': checked_answers,
+            "correct_ratio":correct_ratio}
 
         return render(request,'excercises/excercise_set_check.html',context)
 

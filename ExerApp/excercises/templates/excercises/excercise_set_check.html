@@ -3,6 +3,8 @@
 
 <h1>{{exercise_set.name}} </h1>
 <h2>Check</h2>
+<a class="btn btn-primary" href="{% url 'excercise_set_learn_view' exercise_set.id %}">Back</a> 
+
 <p> 
 Correct: {{correct_ratio|floatformat:1 }}%
 </p>
