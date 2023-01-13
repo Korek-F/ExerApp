@@ -3,6 +3,9 @@ from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.views import View
 from django.contrib.auth import authenticate, login, logout
 
+
+
+
 class LoginView(View):
 
     def get(self, request):

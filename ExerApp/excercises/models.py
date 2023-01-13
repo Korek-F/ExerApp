@@ -3,12 +3,15 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.template.loader import render_to_string
 from django.urls import reverse
+from exer_auth.models import User
 import random
 # Create your models here.
 
 
 class ExerciseSet(models.Model):
     name = models.CharField(max_length=255)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE)
+    creation_date = models.DateTimeField(auto_now_add=True, blank=True)
     
     @property
     def number_of_points(self):

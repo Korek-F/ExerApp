@@ -21,6 +21,9 @@
           <ul class="navbar-nav">
             {%if user.is_authenticated %}
               <li class="nav-item">
+                <a class="nav-link" href="{% url 'excercise_set_create_view' %}">Create exercise set</a>
+              </li>
+              <li class="nav-item">
                 <a class="nav-link" href="{% url 'logout' %}">Logout</a>
               </li>
             {% else %}

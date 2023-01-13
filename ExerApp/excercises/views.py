@@ -6,6 +6,8 @@ from django.http import HttpResponseRedirect
 from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import redirect
 from .forms import ExerciseSetCreationForm
+from django.contrib.auth.mixins import LoginRequiredMixin
+
 
 class AllExercisesSets(View):
     def get(self, request, *args, **kwargs):
@@ -109,7 +111,8 @@ class ExerciseDeleteView(View):
         return render(request, 'excercises/partials/exercise_edit_form.html', context)
 
 
-class ExerciseSetCreationView(View):
+class ExerciseSetCreationView(LoginRequiredMixin,View):
+    
     def get(self, request):
         form = ExerciseSetCreationForm()
         context = {'form':form}
@@ -119,7 +122,9 @@ class ExerciseSetCreationView(View):
         form = ExerciseSetCreationForm(request.POST or None)
         context={}
         if form.is_valid():
-            obj = form.save()
+            obj = form.save(commit=False)
+            obj.owner = request.user
+            obj.save()
             context["message"]="Created succesfully!"
             context["object"] = obj
             return render(request, 'excercises/partials/exercise_set_create_succesful.html', context)
