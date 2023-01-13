@@ -39,7 +39,12 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'crispy_forms',
     'excercises',
+    'exer_auth',
+
 ]
+
+
+AUTH_USER_MODEL = "exer_auth.User"
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
