@@ -113,7 +113,7 @@ class Hint(ItemBase):
         return self.content
     @property
     def content_type(self):
-        return "text"
+        return "hint"
     def __str__(self):
         return str(self.pk) +" "+self.content[:50]
 
@@ -133,7 +133,6 @@ class ABCD(ItemBase):
     def get_answers_to_render(self):
         answers = self.answers.split("//") 
         random.shuffle(answers)
-        print(answers)
         return answers
 
     @property

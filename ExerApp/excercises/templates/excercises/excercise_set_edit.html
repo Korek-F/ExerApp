@@ -1,11 +1,13 @@
 {% extends "excercises/base.html" %}
 {% block content %}
 
-<h1>{{exercise_set.name}} </h1>
-<h2>Edit</h2>
+<div class="page-header"> 
+<h1>Edit</h1>
+<a class="btn btn-primary" href="{% url 'excercise_set_learn_view' exercise_set.id %}">Back</a> 
+</div>
 
-
-
+<hr/>
+<h2>{{exercise_set.name}} </h2>
 <div id="exercise_delete_form" > 
 {%for exercise in exercise_set.exercise_set.all%}
     {{ forloop.counter }}. 
@@ -29,9 +31,6 @@
 {%endfor%}
 </div>
 
-
-
-
 <hr />
 
 
@@ -46,7 +45,7 @@
 
     <button id="save_exercise_btn">Save</button>
 </form>
-
+<hr />
         
 <select id="content_type" size=4>
     <option> Text </option>
@@ -64,12 +63,6 @@
 
 </p>
 <br />
-
-
-
-
-
-
 
 
 <script>
