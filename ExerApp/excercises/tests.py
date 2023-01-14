@@ -31,3 +31,39 @@ class TestExercisesModel(TestCase):
         self.assertEqual(text_content.item.content_type, "text")
 
 
+        content_item = BlankText.objects.create(correct="Warsaw")
+        cc = ContentType.objects.get_for_model(BlankText)
+        Content.objects.create(exercise=self.exercise, content_type=cc,object_id=content_item.id)
+
+        text_content = Content.objects.get(id=2)
+        self.assertEqual(text_content.item.correct, "Warsaw")
+        self.assertEqual(text_content.item.is_correct("Cracow"), False)
+        self.assertEqual(text_content.item.is_correct("Warsaw"), True)
+        self.assertEqual(text_content.item.correct_answer, "Warsaw")
+        self.assertEqual(text_content.item.content_type, "blank_text")
+
+
+        content_item = Hint.objects.create(content="hintt")
+        cc = ContentType.objects.get_for_model(Hint)
+        Content.objects.create(exercise=self.exercise, content_type=cc,object_id=content_item.id)
+
+        text_content = Content.objects.get(id=3)
+        self.assertEqual(text_content.item.content, "hintt")
+        self.assertEqual(text_content.item.is_correct("Warsaw"), True)
+        self.assertEqual(text_content.item.correct_answer, "hintt")
+        self.assertEqual(text_content.item.content_type, "hint")
+
+
+        content_item = ABCD.objects.create(answers="warsaw//cracow//radom")
+        cc = ContentType.objects.get_for_model(ABCD)
+        Content.objects.create(exercise=self.exercise, content_type=cc,object_id=content_item.id)
+
+        text_content = Content.objects.get(id=4)
+        self.assertEqual(text_content.item.answers, "warsaw//cracow//radom")
+        self.assertEqual(text_content.item.is_correct("warsaw"), True)
+        self.assertEqual(text_content.item.is_correct("elk"), False)
+        self.assertEqual(text_content.item.correct_answer, "warsaw")
+        self.assertEqual(text_content.item.content_type, "abcd")
+
+
+
