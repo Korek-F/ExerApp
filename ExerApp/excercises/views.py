@@ -2,7 +2,6 @@ from django.shortcuts import render, get_object_or_404
 from django.views import generic, View
 from .models import ExerciseSet, BlankText,Exercise, Text, Content, Hint, ABCD
 from django.template.loader import render_to_string
-from django.http import HttpResponseRedirect
 from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import redirect
 from .forms import ExerciseSetCreationForm
