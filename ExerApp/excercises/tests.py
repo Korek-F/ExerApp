@@ -2,8 +2,10 @@ from django.test import TestCase, Client
 from exer_auth.models import User
 from .models import ExerciseSet, Exercise, Text, BlankText, Hint, ABCD, Content
 from django.contrib.contenttypes.models import ContentType
+from django.urls import reverse
+import json
 
-class TestExercisesModel(TestCase):
+class TestExercisesModels(TestCase):
     def setUp(self):
         self.c = Client()
         self.user = User.objects.create_user('john','john@elek.pl','johnhardpassowrd1')
@@ -65,5 +67,17 @@ class TestExercisesModel(TestCase):
         self.assertEqual(text_content.item.correct_answer, "warsaw")
         self.assertEqual(text_content.item.content_type, "abcd")
 
-
+class TestExercisesViews(TestCase):
+    def setUp(self):
+        self.c = Client()
+        self.user = User.objects.create_user('john','john@elek.pl','johnhardpassowrd1')
+        ExerciseSet.objects.create(name="set1-ex-abc", owner=self.user)
+        ExerciseSet.objects.create(name="set2", owner=self.user)
+    
+    def test_all_exercises_sets_view(self):
+        response = self.c.get(reverse('exercises'))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'set1-ex-abc')
+        self.assertContains(response, 'set2')
+        
 
