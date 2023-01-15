@@ -80,7 +80,10 @@ class ExerciseSetCheckView(View):
 
                 if content.item.content_type not in ['text', 'hint']:
                     if not content.item in correct_items:
-                        answer = wrong_items[content.item]
+                        try:    
+                            answer = wrong_items[content.item]
+                        except:
+                            answer=""
                         if answer == '': answer="___" 
                         checked_exercise.append(render_to_string('excercises/checked_exercises/wrong.html',{"correct":content.item.correct_answer,
                         "answer":answer}

@@ -67,6 +67,8 @@ class TestExercisesModels(TestCase):
         self.assertEqual(text_content.item.correct_answer, "warsaw")
         self.assertEqual(text_content.item.content_type, "abcd")
 
+        self.assertEqual(self.exercise.number_of_points,2)
+
 class TestExercisesViews(TestCase):
     def setUp(self):
         self.c = Client()
@@ -81,3 +83,67 @@ class TestExercisesViews(TestCase):
         self.assertContains(response, 'set2')
         
 
+    def test_exercise_set_edit__learn_check_view(self):
+        #edit
+        response = self.c.get(reverse('excercise_set_edit_view',kwargs={"set_id":1}))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "set1-ex-abc")
+        self.assertNotContains(response, "set2")
+
+        response = self.c.post(reverse('excercise_set_edit_view',kwargs={"set_id":1}),{"content-Text-1-1":"start"})
+        self.assertEqual(response.status_code, 200)
+        exercise = ExerciseSet.objects.get(id=1).exercise_set.first()
+        item_content = exercise.content_set.first().item.content
+        self.assertEqual(item_content, "start")
+
+        response = self.c.post(reverse('excercise_set_edit_view',kwargs={"set_id":1}),{"content-Text-2-1":"start","content-Blank-2-2":"end","content-ABCD-2-3":"aa//bb//cc"})
+        self.assertEqual(response.status_code,200)
+        
+        exercise = ExerciseSet.objects.get(id=1).exercise_set.all()[1]
+        item_content1 = exercise.content_set.all()[0].item.content
+        item_content2 = exercise.content_set.all()[1].item.correct
+        item_content3 = exercise.content_set.all()[2].item.answers
+        self.assertEqual([item_content1, item_content2, item_content3], ["start","end","aa//bb//cc"])
+        self.assertEqual(exercise.number_of_points,2)
+
+        response = self.c.get(reverse('excercise_set_edit_view',kwargs={"set_id":1}))
+        self.assertContains(response,"start")
+        self.assertContains(response,"end")
+
+        #learn
+        response = self.c.get(reverse('excercise_set_learn_view',kwargs={"set_id":1}))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response,"Learn")
+        self.assertContains(response,"start")
+        self.assertNotContains(response,"end")
+
+        #check
+        response = self.c.post(reverse('excercise_set_check_view', kwargs={"set_id":1}),{"answer_blanktext_2":["end"]})
+        self.assertEqual(response.status_code,200)
+        self.assertContains(response, "Correct: 50.0%")
+    
+    def test_delete_exercise_view(self):
+        exercise_set = ExerciseSet.objects.get(id=1)
+        exercise = Exercise.objects.create(exercise_set=exercise_set)
+        
+        self.assertEqual(exercise_set.exercise_set.first(),exercise)
+        response = self.c.post(reverse("excercise_delete_view", kwargs={"set_id":1}),{"delete_id":exercise.id})
+        self.assertEqual(response.status_code, 200)
+        self.assertNotEqual(exercise_set.exercise_set.first(),exercise)
+
+    def test_create_exercise_set_view(self):
+        response = self.c.get(reverse("excercise_set_create_view"))
+        self.assertEqual(response.status_code,302)
+        response = self.c.post(reverse('login'),{'username':'john','password':'johnhardpassowrd1'})
+        response = self.c.get(reverse("excercise_set_create_view"))
+        self.assertEqual(response.status_code,200)
+        response = self.c.post(reverse('excercise_set_create_view'),{'name':'john_test'})
+        self.assertEqual(response.status_code,200)
+        ex_set = ExerciseSet.objects.get(id=3)
+        self.assertEqual(ex_set.name, 'john_test')
+
+
+        
+
+
+        
