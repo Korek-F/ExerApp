@@ -5,12 +5,12 @@
 <h2>Learn</h2>
 <h3>Number of points to achieve: {{exercise_set.number_of_points}}</h3>
 
-<a class="btn btn-primary" href="{% url 'excercise_set_edit_view' exercise_set.id %}">
-    Edit</a> 
-
+{% if user == exercise_set.owner %}
+    <a class="btn btn-primary" href="{% url 'excercise_set_edit_view' exercise_set.id %}">Edit</a> 
+{% endif %}
 <br />
 
-
+{% if exercise_set.number_of_points > 0 %}
 <form method="POST" action="{% url 'excercise_set_check_view' exercise_set.id%}">
 
 
@@ -29,5 +29,5 @@
     {% csrf_token %} 
     <input type="submit" class="btn btn-primary" value="Check" />
 </form> 
-
+{% endif %}
 {% endblock %}

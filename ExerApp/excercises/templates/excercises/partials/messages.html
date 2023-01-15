@@ -1,0 +1,9 @@
+<div class="disappear-box"> 
+    {% for message in messages %}
+    <div class="container-fluid p-0 ">
+        <div class="alert {{ message.tags }} alert-dismissible" role="alert" >
+            {{ message }}
+        </div>
+    </div>
+    {% endfor %}
+</div>

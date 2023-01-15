@@ -6,7 +6,8 @@ from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import redirect
 from .forms import ExerciseSetCreationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
-
+from django.urls import reverse
+from django.contrib import messages
 
 class AllExercisesSets(View):
     def get(self, request, *args, **kwargs):
@@ -15,21 +16,21 @@ class AllExercisesSets(View):
         return render(request, 'excercises/all_excercises_sets_page.html', context)
 
 
-
-
-
-
-class ExerciseSetEditView(View):
+class ExerciseSetEditView(LoginRequiredMixin,View):
     def get(self, request, *args, **kwargs):
         exercise_set = get_object_or_404(ExerciseSet, pk=kwargs['set_id'])
-        context = {'exercise_set': exercise_set,  
-        'count':len(exercise_set.exercise_set.all())}
+        context = {'exercise_set': exercise_set, 'count':len(exercise_set.exercise_set.all())}
+        if not request.user == exercise_set.owner:
+            return redirect(reverse("excercise_set_learn_view", kwargs={"set_id":kwargs['set_id']}))
+
         return render(request,'excercises/excercise_set_edit.html',context)
     
     def post(self, request, *args, **kwargs):
         exercise_set = get_object_or_404(ExerciseSet, pk=kwargs['set_id'])
         context = {'exercise_set': exercise_set}
-        
+        if not request.user == exercise_set.owner:
+            return redirect(reverse("excercise_set_learn_view", kwargs={"set_id":kwargs['set_id']}))
+
         current_ex = Exercise.objects.create(exercise_set=exercise_set)
         for i in request.POST:
             if i.startswith("content"):
@@ -48,7 +49,7 @@ class ExerciseSetEditView(View):
                     cc = ContentType.objects.get_for_model(Hint)
 
                 Content.objects.create(exercise=current_ex, content_type=cc,object_id=content_item.id)
-        
+        messages.success(request, "Exercise added!")
         return render(request, 'excercises/partials/exercise_edit_form.html', context)
 
 class ExerciseSetLearnView(View):
@@ -63,6 +64,7 @@ class ExerciseSetCheckView(View):
         
         correct_items = []
         wrong_items = {}
+        #Checking answers
         for i in request.POST:
             if i.startswith('answer_blank') or i.startswith('answer_abcd'):
                 obj_id = int(i.split("_")[2])
@@ -72,7 +74,7 @@ class ExerciseSetCheckView(View):
                     correct_items.append(obj)
                 else:
                     wrong_items[obj]=answer
-
+        #rendering answers
         checked_answers = []
         for exercise in exercise_set.exercise_set.all():
             checked_exercise = []
@@ -80,10 +82,8 @@ class ExerciseSetCheckView(View):
 
                 if content.item.content_type not in ['text', 'hint']:
                     if not content.item in correct_items:
-                        try:    
-                            answer = wrong_items[content.item]
-                        except:
-                            answer=""
+                        try: answer = wrong_items[content.item]
+                        except: answer=""
                         if answer == '': answer="___" 
                         checked_exercise.append(render_to_string('excercises/checked_exercises/wrong.html',{"correct":content.item.correct_answer,
                         "answer":answer}
@@ -109,7 +109,7 @@ class ExerciseDeleteView(View):
         context = {'exercise_set': exercise_set}
         if request.POST.get("delete_id"):
             get_object_or_404(Exercise, pk=request.POST.get("delete_id")).delete()
-
+            messages.success(request, "Exercise deleted!")
         return render(request, 'excercises/partials/exercise_edit_form.html', context)
 
 
@@ -127,8 +127,8 @@ class ExerciseSetCreationView(LoginRequiredMixin,View):
             obj = form.save(commit=False)
             obj.owner = request.user
             obj.save()
-            context["message"]="Created succesfully!"
             context["object"] = obj
+            messages.success(request, "Created succesfully!")
             return render(request, 'excercises/partials/exercise_set_create_succesful.html', context)
             
         return render(request, 'excercises/exercise_set_create.html',context)
