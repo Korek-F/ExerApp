@@ -132,3 +132,4 @@ class ExerciseSetCreationView(LoginRequiredMixin,View):
             return render(request, 'excercises/partials/exercise_set_create_succesful.html', context)
             
         return render(request, 'excercises/exercise_set_create.html',context)
+

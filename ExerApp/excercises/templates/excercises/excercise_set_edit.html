@@ -7,62 +7,72 @@
 </div>
 
 <hr/>
-<h2>{{exercise_set.name}} </h2>
-<div id="exercise_delete_form" > 
-{%for exercise in exercise_set.exercise_set.all%}
-    {{ forloop.counter }}. 
-    {%for content in exercise.content_set.all%}
-        {% if content.item.content_type == "text" %}
-            {{content.item.correct_answer}}
-        {% else %}
-           <span style="color:gray;"> {{content.item.correct_answer}} </span>
-        {% endif %}
-    {%endfor%}
+<div class="row">
+    <div class="col-sm-8">
+        <h2>{{exercise_set.name}} </h2>
+        <div id="exercise_delete_form" > 
+            {%for exercise in exercise_set.exercise_set.all%}
+                {{ forloop.counter }}. 
+                {%for content in exercise.content_set.all%}
+                    {% if content.item.content_type == "text" %}
+                        {{content.item.correct_answer}}
+                    {% else %}
+                    <span style="color:gray;"> {{content.item.correct_answer}} </span>
+                    {% endif %}
+                {%endfor%}
 
-    <form hx-post="{% url 'excercise_delete_view' exercise_set.id %}" 
-    hx-target="#exercise_delete_form"
-     style="display: inline;">
-        {% csrf_token %}
-        <input type="hidden" name="delete_id" value="{{exercise.id}}" />
-        <input type="submit" value="Delete" class="btn btn-secondary mt-2"/>
-    </form>
+                <form hx-post="{% url 'excercise_delete_view' exercise_set.id %}" 
+                hx-target="#exercise_delete_form"
+                style="display: inline;">
+                    {% csrf_token %}
+                    <input type="hidden" name="delete_id" value="{{exercise.id}}" />
+                    <input type="submit" value="Delete" class="btn btn-secondary mt-2"/>
+                </form>
 
-    <br />
-{%endfor%}
-</div>
+                <br />
+            {%endfor%}
+        </div>
 
-<hr />
+        <hr />
 
 
-<form id="new_exercises" 
-    hx-post="{% url 'excercise_set_edit_view' exercise_set.id %}"
-    hx-target="#exercise_delete_form"
-> 
-    {% csrf_token %}
-    <div id="exercise_preview"> 
-        Preview: 
+        <form id="new_exercises" 
+            hx-post="{% url 'excercise_set_edit_view' exercise_set.id %}"
+            hx-target="#exercise_delete_form"> 
+            {% csrf_token %}
+            <div id="exercise_preview"> 
+                Preview: 
+            </div>
+
+            <button id="save_exercise_btn" class="btn btn-primary" >Save</button>
+        </form>
+            <hr />
+                    
+            <select id="content_type" size=4>
+                <option> Text </option>
+                <option> Blank </option>
+                <option> Hint </option>
+                <option> ABCD </option>
+            </select>
+            <input type="text" id="content_content"/>
+            <button onClick="add_content()" class="btn btn-secondary">Add field</button>
+            <p>
+                Use ABCD in following pattern:<br />
+                Good_answer//bad_answer//bad_answer//...<br />
+                Use "//" to separate answers.<br />
+                You can create up to 5 answers.<br />
+
+            </p>
     </div>
 
-    <button id="save_exercise_btn" class="btn btn-primary" >Save</button>
-</form>
-<hr />
-        
-<select id="content_type" size=4>
-    <option> Text </option>
-    <option> Blank </option>
-    <option> Hint </option>
-    <option> ABCD </option>
-</select>
-<input type="text" id="content_content"/>
-<button onClick="add_content()" class="btn btn-secondary">Add field</button>
-<p>
-    Use ABCD in following pattern:<br />
-    Good_answer//bad_answer//bad_answer//...<br />
-    Use "//" to separate answers.<br />
-    You can create up to 5 answers.<br />
+    <div class="col-sm-4">
+        <h2>Categories</h2>
+        {%for category in exercise_set.categories.all%}
+            {{category.name}}
+        {% endfor %}
+    </div>
+</div>
 
-</p>
-<br />
 
 
 <script>

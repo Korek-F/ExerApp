@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'crispy_forms',
     'excercises',
     'exer_auth',
-
+    'profiles',
+    'categories'
 ]
 
 
