@@ -1,0 +1,11 @@
+{% extends "excercises/base.html" %}
+{% block content %}
+
+<h1>{{category.name}}</h1>
+<p>All exercises sets with that category: {{category.number_of_sets}}</p>
+<h2>Exercises Sets</h2>
+<p>All exercises sets with "{{category.name}}" category </p>
+{% for exercise_set in exercises_sets %}
+  {% include 'excercises/partials/exercise_set_card.html' %}
+{% endfor %}
+{% endblock %}

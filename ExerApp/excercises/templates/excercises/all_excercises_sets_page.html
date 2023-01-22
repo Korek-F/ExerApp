@@ -4,19 +4,7 @@
 <h1>All exercise sets</h1>
 <div class="row"> 
 {%for exercise_set in exercises_sets%}
-    <div class="card col-sm-4 ">
-        <div class="card-body">
-          <h5 class="card-title">{{exercise_set.name}}</h5>
-          <h6 class="card-subtitle mb-2 text-muted"> {{exercise_set.creation_date|date:"d.m.Y"}} </h6>
-          <h6 class="card-subtitle mb-2 text-muted"> 
-            {% for category in exercise_set.categories.all %}
-                {{category.name}}
-            {% endfor %}
-          </h6>
-          <p class="card-text">{{exercise_set.description}}</p>
-          <a href="{{exercise_set.get_absolute_url}}" class="card-link">Go</a><br />
-        </div>
-      </div>
+    {%include 'excercises/partials/exercise_set_card.html' %}
 {%endfor%}
 </div>
 <br />

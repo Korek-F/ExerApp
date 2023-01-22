@@ -6,3 +6,9 @@ class Category(models.Model):
 
     def __str__(self):
         return self.name
+    
+    @property
+    def number_of_sets(self):
+        return self.exerciseset_set.all().count()
+
+    
