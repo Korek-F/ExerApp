@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'excercises',
     'exer_auth',
     'profiles',
-    'categories'
+    'categories',
 ]
 
 

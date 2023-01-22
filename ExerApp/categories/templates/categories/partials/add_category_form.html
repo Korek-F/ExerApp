@@ -1,0 +1,19 @@
+<div id="add-category-form">
+    <h1>Categories</h1>
+    {% for category in exercise_set.categories.all %}
+        <form hx-post="{% url 'delete_cat_from_set' exercise_set.id%}" hx-target="#add-category-form">
+            {{category.name}}
+            {%csrf_token%}
+            <input type="hidden" name="delete_id" value="{{category.id}}" />
+            <input type="submit" value="Delete" class="btn btn-secondary mt-2"/>
+        </form>
+    {% endfor %}
+
+    <h2>Add category</h2>
+    <form hx-post="{% url 'add_cat_to_set' exercise_set.id%}" hx-target="#add-category-form">
+        {%csrf_token%}
+        <label>Category Name</label>
+        <input type="text" name="cat_name" />
+        <input type="submit" value="Add" class="btn btn-primary mt-2"/>
+    <form>
+</div>

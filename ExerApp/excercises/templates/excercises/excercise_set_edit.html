@@ -66,10 +66,7 @@
     </div>
 
     <div class="col-sm-4">
-        <h2>Categories</h2>
-        {%for category in exercise_set.categories.all%}
-            {{category.name}}
-        {% endfor %}
+        {%include 'categories/partials/add_category_form.html' with exercise_set=exercise_set%}
     </div>
 </div>
 
