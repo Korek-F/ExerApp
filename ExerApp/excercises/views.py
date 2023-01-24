@@ -8,6 +8,7 @@ from .forms import ExerciseSetCreationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse
 from django.contrib import messages
+from categories.forms import CreateCategoryForm
 
 class AllExercisesSets(View):
     def get(self, request, *args, **kwargs):
@@ -19,8 +20,10 @@ class AllExercisesSets(View):
 class ExerciseSetEditView(LoginRequiredMixin,View):
     def get(self, request, *args, **kwargs):
         exercise_set = get_object_or_404(ExerciseSet, pk=kwargs['set_id'])
+        form = CreateCategoryForm(initial={"set_id":kwargs['set_id']})
         context = {'exercise_set': exercise_set, 
-        'count':len(exercise_set.exercise_set.all())}
+        'count':len(exercise_set.exercise_set.all()),
+        "form":form}
         if not request.user == exercise_set.owner:
             return redirect(reverse("excercise_set_learn_view", kwargs={"set_id":kwargs['set_id']}))
 
