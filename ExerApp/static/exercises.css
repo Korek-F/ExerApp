@@ -34,3 +34,24 @@
         transform: rotateX(90deg);
     }
 }
+
+.categories-box {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.category-box {
+    background-color: rgb(4, 0, 255);
+    margin: .4rem;
+    padding: .4rem 2rem;
+    border-radius: .5rem;
+}
+
+.category-link {
+    text-decoration: none;
+    color: white;
+}
+
+.category-link:hover {
+    color: rgb(206, 206, 206);
+}

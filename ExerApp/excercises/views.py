@@ -19,7 +19,8 @@ class AllExercisesSets(View):
 class ExerciseSetEditView(LoginRequiredMixin,View):
     def get(self, request, *args, **kwargs):
         exercise_set = get_object_or_404(ExerciseSet, pk=kwargs['set_id'])
-        context = {'exercise_set': exercise_set, 'count':len(exercise_set.exercise_set.all())}
+        context = {'exercise_set': exercise_set, 
+        'count':len(exercise_set.exercise_set.all())}
         if not request.user == exercise_set.owner:
             return redirect(reverse("excercise_set_learn_view", kwargs={"set_id":kwargs['set_id']}))
 

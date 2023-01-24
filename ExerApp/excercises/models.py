@@ -16,6 +16,7 @@ class ExerciseSet(models.Model):
     description = models.TextField(max_length=1000)
     categories = models.ManyToManyField(Category)
 
+
     @property
     def number_of_points(self):
         points = 0
