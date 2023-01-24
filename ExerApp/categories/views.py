@@ -17,6 +17,7 @@ def delete_category_from_set(request, set_id):
 
         new_form =  CreateCategoryForm(initial={"set_id":set_id})
         context = {"exercise_set":exercise_set,"form":new_form}
+        
         return render(request, 'categories/partials/add_category_form.html',context)
 
 def add_category_to_set(request, set_id):
