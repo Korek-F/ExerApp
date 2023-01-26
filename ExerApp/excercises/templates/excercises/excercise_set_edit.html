@@ -12,14 +12,6 @@
         <h2>{{exercise_set.name}} </h2>
         <div id="exercise_delete_form" > 
             {%for exercise in exercise_set.exercise_set.all%}
-                {{ forloop.counter }}. 
-                {%for content in exercise.content_set.all%}
-                    {% if content.item.content_type == "text" %}
-                        {{content.item.correct_answer}}
-                    {% else %}
-                    <span style="color:gray;"> {{content.item.correct_answer}} </span>
-                    {% endif %}
-                {%endfor%}
 
                 <form hx-post="{% url 'excercise_delete_view' exercise_set.id %}" 
                 hx-target="#exercise_delete_form"
@@ -31,9 +23,20 @@
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
                             <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
                             <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
-                          </svg>
+                        </svg>
                     </button> 
                 </form>
+
+                {{ forloop.counter }}. 
+                {%for content in exercise.content_set.all%}
+                    {% if content.item.content_type == "text" %}
+                        {{content.item.correct_answer}}
+                    {% else %}
+                    <span style="color:gray;"> {{content.item.correct_answer}} </span>
+                    {% endif %}
+                {%endfor%}
+
+                
 
                 <br />
             {%endfor%}
@@ -46,23 +49,35 @@
             hx-post="{% url 'excercise_set_edit_view' exercise_set.id %}"
             hx-target="#exercise_delete_form"> 
             {% csrf_token %}
+            <h6>Preview:</h6>
             <div id="exercise_preview"> 
-                Preview: 
+                 
             </div>
 
             <button id="save_exercise_btn" class="btn btn-primary" >Save</button>
         </form>
             <hr />
-                    
-            <select id="content_type" size=4>
-                <option> Text </option>
-                <option> Blank </option>
-                <option> Hint </option>
-                <option> ABCD </option>
-            </select>
-            <input type="text" id="content_content"/>
-            <button onClick="add_content()" class="btn btn-secondary">Add field</button>
-            <p>
+            
+            <div class="row">
+                <div class="col-sm-4">
+                    <select id="content_type" class="form-control">
+                        <option> Text </option>
+                        <option> Blank </option>
+                        <option> Hint </option>
+                        <option> ABCD </option>
+                    </select>
+                </div>
+                <div class="col-sm-6" >
+                    <input type="text" class="form-control"
+                     id="content_content"/>
+                </div>
+
+                <div class="col-sm-2">
+                    <button onClick="add_content()" class="btn btn-secondary">Add field</button>
+                </div>
+
+            </div>
+            <p class="exercise-edit-info">
                 Use ABCD in following pattern:<br />
                 Good_answer//bad_answer//bad_answer//...<br />
                 Use "//" to separate answers.<br />
@@ -91,22 +106,30 @@
     document.addEventListener('htmx:afterRequest', function() {
         current_content = 0
         excercise_count+=1
-        exercise_preview.innerHTML = "Preview: "
+        exercise_preview.innerHTML = ""
     });
     const add_content = () => {
-        exercise_preview.innerHTML += 
-        generateInputField(content_type.value, content_content.value, excercise_count, current_content)
-        content_content.value= ""
-        current_content += 1
+        if(content_content.value !==""){
+            exercise_preview.innerHTML += 
+            generateInputField(content_type.value, content_content.value, excercise_count, current_content)
+            content_content.value= ""
+            current_content += 1
+        }
     }
 
     const generateInputField = (contentType, contentValue, exercise_number, content_number) =>{
         return `
-        <small>${contentType}: </small><span>${contentValue}</span>
+        <div class="preview_box">
+            ${contentValue}<br />
+            <hr />
+            <span>(${contentType})</span>
+        
+
         <input type="hidden" 
         value="${contentValue}" 
         name="content-${contentType}-${exercise_number}-${content_number}" 
-        />`
+        />
+        </div>`
     }
 
 </script>

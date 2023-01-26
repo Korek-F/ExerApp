@@ -1,3 +1,7 @@
+body {
+    background-color: #a1cece;
+}
+
 .disappear-box {
     animation-name: disappear-animation;
     animation-duration: 5000ms;
@@ -60,4 +64,54 @@
 .errorlist>li {
     color: red;
 
+}
+
+
+[class*="col-"] {
+    background-clip: padding-box;
+    border: 6px solid transparent;
+}
+
+.my-navbar {
+    background-color: #5B7EFF !important;
+
+}
+
+.my-navbar a {
+    color: #F5D7C8 !important;
+}
+
+
+.exercise-edit-info {
+    padding: .5rem;
+    text-align: center;
+}
+
+#exercise_preview {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.preview_box {
+    background-color: hsl(180, 80%, 86%);
+    padding: 0 .5rem;
+    text-align: center;
+    position: relative;
+    border: 2px solid #5B7EFF;
+    border-radius: 1rem;
+    margin: .8rem;
+}
+
+.preview_box::before {
+    content: "+";
+    color: #5B7EFF;
+
+    position: absolute;
+    top: -1rem;
+    right: -2rem;
+    font-size: 3rem;
+}
+
+.preview_box hr {
+    margin: 0;
 }

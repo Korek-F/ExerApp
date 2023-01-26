@@ -12,7 +12,7 @@ from categories.forms import CreateCategoryForm
 
 class AllExercisesSets(View):
     def get(self, request, *args, **kwargs):
-        exercises_sets = ExerciseSet.objects.all()
+        exercises_sets = ExerciseSet.objects.all().filter(is_public=True)
         context = {'exercises_sets': exercises_sets}
         return render(request, 'excercises/all_excercises_sets_page.html', context)
 
@@ -36,6 +36,7 @@ class ExerciseSetEditView(LoginRequiredMixin,View):
             return redirect(reverse("excercise_set_learn_view", kwargs={"set_id":kwargs['set_id']}))
 
         current_ex = Exercise.objects.create(exercise_set=exercise_set)
+
         for i in request.POST:
             if i.startswith("content"):
                 content_type = i.split("-")[1]
