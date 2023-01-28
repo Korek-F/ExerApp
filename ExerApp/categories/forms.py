@@ -27,4 +27,6 @@ class CreateCategoryForm(forms.Form):
         category,created = Category.objects.get_or_create(name=data["name"])
         self.exercise_set.categories.add(category)
         self.exercise_set.save()
+        category.popularity += 1
+        category.save()
         return category

@@ -7,7 +7,6 @@ from django.contrib import messages
 
 
 class LoginView(View):
-
     def get(self, request):
         context = {}
         if request.user.is_authenticated:

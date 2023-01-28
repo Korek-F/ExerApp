@@ -13,6 +13,9 @@ def delete_category_from_set(request, set_id):
 
         category = get_object_or_404(Category, id=request.POST.get("delete_id"))
         exercise_set.categories.remove(category)
+        category.popularity -= 1
+        category.save()
+        
         messages.success(request,f"Removed from category {category.name}")
 
         new_form =  CreateCategoryForm(initial={"set_id":set_id})

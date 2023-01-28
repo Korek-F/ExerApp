@@ -3,10 +3,10 @@
 
 <h1>Learn mode</h1>
 <div class="row">
-<h2 class="col-sm-11">{{exercise_set.name}}</h2>
-<div class="col-sm-1">
+<h2 class="col-sm-8">{{exercise_set.name}}</h2>
+<div class="col-sm-4">
 {% if user == exercise_set.owner %}
-    <a class="btn btn-primary" href="{% url 'excercise_set_edit_view' exercise_set.id %}">Edit</a> 
+    <a class="btn btn-primary float-end" href="{% url 'excercise_set_edit_view' exercise_set.id %}">Edit</a> 
 {% endif %}
 </div>
 
@@ -18,8 +18,6 @@
     <h4>Check your self!</h4>
     {% if exercise_set.number_of_points > 0 %}
     <form method="POST" action="{% url 'excercise_set_check_view' exercise_set.id%}">
-
-
             {%for exercise in exercise_set.exercise_set.all%}
                 {{ forloop.counter }}. 
                 {%for content in exercise.content_set.all%}

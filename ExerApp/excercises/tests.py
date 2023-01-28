@@ -9,7 +9,7 @@ class TestExercisesModels(TestCase):
     def setUp(self):
         self.c = Client()
         self.user = User.objects.create_user('john','john@elek.pl','johnhardpassowrd1')
-        self.exercise_set = ExerciseSet.objects.create(name="TestName", owner=self.user)
+        self.exercise_set = ExerciseSet.objects.create(name="TestName", owner=self.user, description="TEST")
         self.exercise = Exercise.objects.create(exercise_set=self.exercise_set)
     
     def test_exerciseset_model(self):
@@ -72,9 +72,14 @@ class TestExercisesModels(TestCase):
 class TestExercisesViews(TestCase):
     def setUp(self):
         self.c = Client()
-        self.user = User.objects.create_user('john','john@elek.pl','johnhardpassowrd1')
-        ExerciseSet.objects.create(name="set1-ex-abc", owner=self.user)
-        ExerciseSet.objects.create(name="set2", owner=self.user)
+        self.user = User.objects.create_user('john','john@elek.pl')
+        self.user.set_password('johnhardpassowrd1')
+        self.user.save()
+
+        self.c.login(username='john',password='johnhardpassowrd1')
+        ExerciseSet.objects.create(name="set1-ex-abc", description="TEST",
+        is_public=True, owner=self.user)
+        ExerciseSet.objects.create(name="set2", description="TEST", is_public=True, owner=self.user)
     
     def test_all_exercises_sets_view(self):
         response = self.c.get(reverse('exercises'))
@@ -86,6 +91,8 @@ class TestExercisesViews(TestCase):
     def test_exercise_set_edit__learn_check_view(self):
         #edit
         response = self.c.get(reverse('excercise_set_edit_view',kwargs={"set_id":1}))
+        
+        print(response)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "set1-ex-abc")
         self.assertNotContains(response, "set2")
@@ -96,29 +103,29 @@ class TestExercisesViews(TestCase):
         item_content = exercise.content_set.first().item.content
         self.assertEqual(item_content, "start")
 
-        response = self.c.post(reverse('excercise_set_edit_view',kwargs={"set_id":1}),{"content-Text-2-1":"start","content-Blank-2-2":"end","content-ABCD-2-3":"aa//bb//cc"})
+        response = self.c.post(reverse('excercise_set_edit_view',kwargs={"set_id":1}),{"content-Text-2-1":"start","content-Blank-2-2":"end22","content-ABCD-2-3":"aa//bb//cc"})
         self.assertEqual(response.status_code,200)
         
         exercise = ExerciseSet.objects.get(id=1).exercise_set.all()[1]
         item_content1 = exercise.content_set.all()[0].item.content
         item_content2 = exercise.content_set.all()[1].item.correct
         item_content3 = exercise.content_set.all()[2].item.answers
-        self.assertEqual([item_content1, item_content2, item_content3], ["start","end","aa//bb//cc"])
+        self.assertEqual([item_content1, item_content2, item_content3], ["start","end22","aa//bb//cc"])
         self.assertEqual(exercise.number_of_points,2)
 
         response = self.c.get(reverse('excercise_set_edit_view',kwargs={"set_id":1}))
         self.assertContains(response,"start")
-        self.assertContains(response,"end")
+        self.assertContains(response,"end22")
 
         #learn
         response = self.c.get(reverse('excercise_set_learn_view',kwargs={"set_id":1}))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response,"Learn")
         self.assertContains(response,"start")
-        self.assertNotContains(response,"end")
+        self.assertNotContains(response,"end22")
 
         #check
-        response = self.c.post(reverse('excercise_set_check_view', kwargs={"set_id":1}),{"answer_blanktext_2":["end"]})
+        response = self.c.post(reverse('excercise_set_check_view', kwargs={"set_id":1}),{"answer_blanktext_2":["end22"]})
         self.assertEqual(response.status_code,200)
         self.assertContains(response, "Correct: 50.0%")
     
@@ -133,11 +140,8 @@ class TestExercisesViews(TestCase):
 
     def test_create_exercise_set_view(self):
         response = self.c.get(reverse("excercise_set_create_view"))
-        self.assertEqual(response.status_code,302)
-        response = self.c.post(reverse('login'),{'username':'john','password':'johnhardpassowrd1'})
-        response = self.c.get(reverse("excercise_set_create_view"))
         self.assertEqual(response.status_code,200)
-        response = self.c.post(reverse('excercise_set_create_view'),{'name':'john_test'})
+        response = self.c.post(reverse('excercise_set_create_view'),{'name':'john_test','description':"TESTTEST"})
         self.assertEqual(response.status_code,200)
         ex_set = ExerciseSet.objects.get(id=3)
         self.assertEqual(ex_set.name, 'john_test')

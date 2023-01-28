@@ -1,7 +1,7 @@
 {% extends "excercises/base.html" %}
 {% block content %}
 <h1>{{object.username}}</h1>
-<small> Member since: {{object.created_at}} </small>
+<small> Member since: {{object.created_at|date:"d.m.Y"}} </small>
 
 <h3>Exercise sets:</h3>
 <div class="row">

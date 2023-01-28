@@ -1,14 +1,14 @@
 from django.shortcuts import render, get_object_or_404
-from django.views import generic, View
-from .models import ExerciseSet, BlankText,Exercise, Text, Content, Hint, ABCD
+from django.views import  View
+from .models import ExerciseSet,Exercise, Content
 from django.template.loader import render_to_string
-from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import redirect
 from .forms import ExerciseSetCreationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse
 from django.contrib import messages
 from categories.forms import CreateCategoryForm
+from .utils import create_content, render_checked_exercise, check_ansewers
 
 class AllExercisesSets(View):
     def get(self, request, *args, **kwargs):
@@ -37,23 +37,8 @@ class ExerciseSetEditView(LoginRequiredMixin,View):
 
         current_ex = Exercise.objects.create(exercise_set=exercise_set)
 
-        for i in request.POST:
-            if i.startswith("content"):
-                content_type = i.split("-")[1]
-                if content_type=="Text":
-                    content_item = Text.objects.create(content=request.POST[i])
-                    cc = ContentType.objects.get_for_model(Text)
-                elif content_type=="Blank":
-                    content_item = BlankText.objects.create(correct=request.POST[i])
-                    cc = ContentType.objects.get_for_model(BlankText)
-                elif content_type=="ABCD":
-                    content_item = ABCD.objects.create(answers=request.POST[i])
-                    cc = ContentType.objects.get_for_model(ABCD)
-                else:
-                    content_item = Hint.objects.create(content=request.POST[i])
-                    cc = ContentType.objects.get_for_model(Hint)
-
-                Content.objects.create(exercise=current_ex, content_type=cc,object_id=content_item.id)
+        [create_content(current_ex, i, request) for i in request.POST if i.startswith("content")]
+           
         messages.success(request, "Exercise added!")
         return render(request, 'excercises/partials/exercise_edit_form.html', context)
 
@@ -67,38 +52,14 @@ class ExerciseSetCheckView(View):
     def post(self, request, *args, **kwargs):
         exercise_set = get_object_or_404(ExerciseSet, pk=kwargs['set_id'])
         
-        correct_items = []
-        wrong_items = {}
         #Checking answers
-        for i in request.POST:
-            if i.startswith('answer_blank') or i.startswith('answer_abcd'):
-                obj_id = int(i.split("_")[2])
-                obj = get_object_or_404(Content, pk=obj_id).item
-                answer = request.POST[i]
-                if obj.is_correct(answer):
-                    correct_items.append(obj)
-                else:
-                    wrong_items[obj]=answer
+        correct_items, wrong_items = check_ansewers(request)
         #rendering answers
         checked_answers = []
         for exercise in exercise_set.exercise_set.all():
-            checked_exercise = []
-            for content in exercise.content_set.all():
-
-                if content.item.content_type not in ['text', 'hint']:
-                    if not content.item in correct_items:
-                        try: answer = wrong_items[content.item]
-                        except: answer=""
-                        if answer == '': answer="___" 
-                        checked_exercise.append(render_to_string('excercises/checked_exercises/wrong.html',{"correct":content.item.correct_answer,
-                        "answer":answer}
-                         ))
-
-                    else:
-                        checked_exercise.append(render_to_string('excercises/checked_exercises/correct.html',{"content":content.item.correct_answer}))
-                else:
-                    checked_exercise.append(content.item.correct_answer)
+            checked_exercise = render_checked_exercise(exercise, correct_items, wrong_items)
             checked_answers.append(checked_exercise)
+
 
         correct_ratio = (len(correct_items)/exercise_set.number_of_points)*100
         context = {

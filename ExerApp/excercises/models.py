@@ -25,6 +25,7 @@ class ExerciseSet(models.Model):
             points += i.number_of_points
         return points
 
+    
     def __str__(self):
         return str(self.pk)+ " " +self.name
 

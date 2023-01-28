@@ -2,13 +2,20 @@
 {% block content %}
 
 <h1>{{exercise_set.name}} </h1>
-<h2>Check</h2>
-<a class="btn btn-primary" href="{% url 'excercise_set_learn_view' exercise_set.id %}">Back</a> 
+
+
+
+<div class="row">
+    <h2 class="col-sm-8">Check</h2>
+    <div class="col-sm-4">
+        <a class="btn btn-primary float-end" href="{% url 'excercise_set_learn_view' exercise_set.id %}">Back</a> 
+    </div>
+</div>
 
 <p> 
 Correct: {{correct_ratio|floatformat:1 }}%
 </p>
-<br/>
+<hr />
 {%for checked_answer in checked_answers%}
     {{ forloop.counter }}. 
     {% for content in checked_answer%}
