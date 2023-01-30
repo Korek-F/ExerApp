@@ -14,4 +14,6 @@ urlpatterns = [
 
     path('exercise-set/create/', 
     views.ExerciseSetCreationView.as_view(), name="excercise_set_create_view"),
+
+    path('search/', views.SearchExercisesSetsView.as_view(), name="search_exercises_sets"),
 ]

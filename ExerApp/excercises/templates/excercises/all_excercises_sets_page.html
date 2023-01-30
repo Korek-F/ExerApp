@@ -1,12 +1,30 @@
 {% extends "excercises/base.html" %}
 {% block content %}
 
-<h1>All exercise sets</h1>
-<div class="row"> 
+<h1 class="mt-4">Exercise sets</h1>
+
+<form hx-get="{% url 'search_exercises_sets' %}" 
+hx-target="#ex-box"
+class="mt-4" >
+    <div class="row">
+        <div class="col-sm-10">
+            <input name='q' class="form-control" type='text' placeholder="Test name, description or category" />
+        </div>
+        <div class="col-sm-2">
+            <button type="submit" 
+            style="width:100%;"
+            class="btn btn-primary btn-block">Search</button>
+        </div>
+    </div>
+</form>
+
+<hr />
+
+<div class="row" id="ex-box"> 
 {%for exercise_set in exercises_sets%}
     {%include 'excercises/partials/exercise_set_card.html' %}
 {%endfor%}
 </div>
-<br />
+
 
 {% endblock %}

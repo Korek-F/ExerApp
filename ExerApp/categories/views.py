@@ -1,11 +1,11 @@
 from django.shortcuts import render
-from django.views.generic import View
+from django.views.generic import View, ListView
 from excercises.models import ExerciseSet
 from .models import Category
 from django.shortcuts import get_object_or_404
 from django.contrib import messages
-from django.core.exceptions import ValidationError
 from .forms import CreateCategoryForm
+from django.db.models import Q
 
 def delete_category_from_set(request, set_id):
     if request.method == 'POST':
@@ -49,3 +49,18 @@ class CategoryDetailView(View):
         exercises_sets = category.exerciseset_set.all()
         context = {"category":category,'exercises_sets':exercises_sets}
         return render(request, "categories/category_detail.html", context)
+
+class SearchCategoriesView(ListView):
+    model = Category
+    template_name = "categories/partials/search_categories.html"
+
+    def get_queryset(self):
+        query = self.request.GET.get('q')
+        object_list = Category.objects.filter(
+            Q(name__icontains=query) 
+        )
+        return object_list
+
+
+
+

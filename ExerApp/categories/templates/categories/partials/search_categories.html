@@ -1,0 +1,7 @@
+
+{%for category in object_list %}
+    {% include "categories/partials/category_link.html"%}
+{% endfor %}
+{% if not object_list%}
+    <h2>No matches found</h2>
+{%endif%}

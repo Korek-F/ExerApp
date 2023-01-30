@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.views import  View
-from .models import ExerciseSet,Exercise, Content
-from django.template.loader import render_to_string
+from django.views.generic import ListView
+from .models import ExerciseSet,Exercise
 from django.shortcuts import redirect
 from .forms import ExerciseSetCreationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -9,6 +9,8 @@ from django.urls import reverse
 from django.contrib import messages
 from categories.forms import CreateCategoryForm
 from .utils import create_content, render_checked_exercise, check_ansewers
+from django.db.models import Q 
+
 
 class AllExercisesSets(View):
     def get(self, request, *args, **kwargs):
@@ -98,3 +100,16 @@ class ExerciseSetCreationView(LoginRequiredMixin,View):
             
         return render(request, 'excercises/exercise_set_create.html',context)
 
+
+class SearchExercisesSetsView(ListView):
+    model = ExerciseSet
+    template_name = "excercises/partials/search_sets.html"
+
+
+    def get_queryset(self):
+        query = self.request.GET.get('q')
+        object_list = ExerciseSet.objects.filter(
+            Q(name__icontains=query) | Q(description__icontains=query)
+            | Q(categories__name__icontains=query)
+        )
+        return object_list

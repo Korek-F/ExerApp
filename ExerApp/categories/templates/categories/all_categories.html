@@ -1,7 +1,24 @@
 {% extends "excercises/base.html" %}
 {% block content %}
+<h1 class="mt-4">Categories</h1>
 
-<div class="categories-box">
+<form hx-get="{% url 'search_categories' %}" class="mt-4" 
+hx-target="#categories-box">
+    <div class="row">
+        <div class="col-sm-10">
+            <input name='q' class="form-control" type='text' placeholder="Category name" />
+        </div>
+        <div class="col-sm-2">
+            <button type="submit" 
+            style="width:100%;"
+            class="btn btn-primary btn-block">Search</button>
+        </div>
+    </div>
+</form>
+
+<hr />
+
+<div class="categories-box" id="categories-box">
 {%for category in categories %}
     {% include "categories/partials/category_link.html"%}
 {% endfor %}

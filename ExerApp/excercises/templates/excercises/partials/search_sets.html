@@ -1,0 +1,7 @@
+{%for exercise_set in object_list %}
+    {%include 'excercises/partials/exercise_set_card.html' %}
+{% endfor %}
+{% if not object_list%}
+    <h2>No matches found</h2>
+{%endif%}
+
