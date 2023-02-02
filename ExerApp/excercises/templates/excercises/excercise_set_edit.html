@@ -81,13 +81,13 @@
                 Use ABCD in following pattern:<br />
                 Good_answer//bad_answer//bad_answer//...<br />
                 Use "//" to separate answers.<br />
-                You can create up to 5 answers.<br />
 
             </p>
     </div>
 
-    <div class="col-sm-4">
-        {%include 'categories/partials/add_category_form.html' with exercise_set=exercise_set%}
+    <div class="col-sm-4" >
+        {%include 'categories/partials/add_category_form.html'%}
+        {%include 'excercises/partials/change_set_status.html'%}
     </div>
 </div>
 

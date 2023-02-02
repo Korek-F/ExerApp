@@ -3,7 +3,7 @@ from django.views import  View
 from django.views.generic import ListView
 from .models import ExerciseSet,Exercise
 from django.shortcuts import redirect
-from .forms import ExerciseSetCreationForm
+from .forms import ExerciseSetCreationForm, ExerciseSetPublicStatus
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse
 from django.contrib import messages
@@ -25,7 +25,8 @@ class ExerciseSetEditView(LoginRequiredMixin,View):
         form = CreateCategoryForm(initial={"set_id":kwargs['set_id']})
         context = {'exercise_set': exercise_set, 
         'count':len(exercise_set.exercise_set.all()),
-        "form":form}
+        'form':form,
+        'form2':ExerciseSetPublicStatus(instance=exercise_set)}
         if not request.user == exercise_set.owner:
             return redirect(reverse("excercise_set_learn_view", kwargs={"set_id":kwargs['set_id']}))
 
@@ -113,3 +114,17 @@ class SearchExercisesSetsView(ListView):
             | Q(categories__name__icontains=query)
         )
         return object_list
+    
+def change_set_status(request, pk):
+    if request.method =="POST":
+        print(pk)
+        instance = get_object_or_404(ExerciseSet, id=pk)
+        form = ExerciseSetPublicStatus(data=request.POST, instance=instance)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Edited succesfully!")
+        context = {}
+        context["form2"] = form
+        context["exercise_set"]=instance
+        return render(request, 'excercises/partials/change_set_status.html',context)
+        

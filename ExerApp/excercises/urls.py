@@ -16,4 +16,6 @@ urlpatterns = [
     views.ExerciseSetCreationView.as_view(), name="excercise_set_create_view"),
 
     path('search/', views.SearchExercisesSetsView.as_view(), name="search_exercises_sets"),
+
+    path('settings/<int:pk>/change-set-status/', views.change_set_status, name="change_set_status")
 ]

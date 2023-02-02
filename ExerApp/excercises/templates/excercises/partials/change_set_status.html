@@ -1,0 +1,11 @@
+{%load crispy_forms_tags %}
+<div class="mt-5" id="set_settings_box">
+    {% include 'excercises/partials/messages.html' %}
+    <h2>Settings</h2>
+    <form hx-post="{% url 'change_set_status' exercise_set.id %}"
+    hx-target="#set_settings_box">
+        {%csrf_token%}
+        {{form2|crispy}}
+        <input type="submit" value="Save" class="btn btn-primary mt-2 float-end"/>
+    </form>
+</div>

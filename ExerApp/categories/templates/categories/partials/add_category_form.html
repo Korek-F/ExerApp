@@ -1,7 +1,7 @@
 {%load crispy_forms_tags %}
 <div id="add-category-form">
     {% include 'excercises/partials/messages.html' %}
-    <h1>Categories</h1>
+    <h2>Categories</h2>
     {% for category in exercise_set.categories.all %}
         <form hx-post="{% url 'delete_cat_from_set' exercise_set.id%}" hx-target="#add-category-form">
             
@@ -17,7 +17,7 @@
         </form>
     {% endfor %}
 
-    <h2>Add category</h2>
+    <h4>Add category</h4>
     
     <form hx-post="{% url 'add_cat_to_set' exercise_set.id%}" hx-target="#add-category-form">
         {%csrf_token%}

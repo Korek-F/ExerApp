@@ -11,4 +11,11 @@ class ExerciseSetCreationForm(forms.ModelForm):
             "is_public":"Make this set public"
         }
 
-    
+class ExerciseSetPublicStatus(forms.ModelForm):
+    class Meta:
+        model = ExerciseSet
+        fields = ['is_public']
+        labels = {
+            "is_public":"Make this set public"
+        }
+

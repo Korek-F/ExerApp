@@ -1,0 +1,11 @@
+{% extends "excercises/base.html" %}
+{%load crispy_forms_tags %}
+{% block content %}
+<h2>Sign Up</h2>
+
+<form action="{% url 'signup' %}" method="POST">
+    {% csrf_token %}
+    {{form|crispy}}
+    <input type="submit" class="btn btn-primary mt-4 float-end" value="Sign up"/>
+<form>
+{% endblock %}
