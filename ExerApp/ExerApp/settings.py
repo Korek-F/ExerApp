@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'exer_auth',
     'profiles',
     'categories',
+    'exams',
 ]
 
 

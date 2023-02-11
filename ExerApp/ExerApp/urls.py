@@ -21,5 +21,6 @@ urlpatterns = [
     path('', include('excercises.urls')),
     path('auth/', include('exer_auth.urls')),
     path('profile/', include('profiles.urls')),
-    path('categories/', include('categories.urls'))
+    path('categories/', include('categories.urls')),
+    path('exams/', include('exams.urls')),
 ]
