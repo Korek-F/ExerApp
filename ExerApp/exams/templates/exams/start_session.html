@@ -4,10 +4,6 @@
 <h1>{{exam.name}} </h1>
 <p>{{exam.description}}</p>
 
-<form method="POST" action="{{ exam.get_absolute_url }}">
-    {% csrf_token %} 
-    {{form}}   
-    <button>Start</button>
-</form>
+{% include "exams/partials/start_session_form.html"%}
 
 {% endblock %}

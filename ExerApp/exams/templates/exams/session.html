@@ -1,0 +1,25 @@
+{% extends "excercises/base.html" %}
+{% block content %}
+
+<h1>{{session.exam.name}} </h1>
+<h3>Test ends at {{session.exam.end_at}}</h3>
+
+{% if session.exam.exercise_set.number_of_points > 0 %}
+     
+    <form hx-post="{{session.get_absolute_url}}">
+        {% csrf_token %}
+        {%for exercise in session.exam.exercise_set.exercise_set.all%}
+            {{ forloop.counter }}. 
+            {%for content in exercise.content_set.all%}
+                {{content.render}}
+            {%endfor%}
+            <br />
+        {%endfor%}
+
+        <input type="submit" class="btn btn-primary mt-2 float-end" value="Check" />
+    </form>
+{% endif %}
+
+
+
+{% endblock %}

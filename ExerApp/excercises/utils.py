@@ -2,6 +2,7 @@ from .models import Content, Text,BlankText,ABCD,Hint
 from django.contrib.contenttypes.models import ContentType
 from django.template.loader import render_to_string
 from django.shortcuts import get_object_or_404
+
 def create_content(current_ex,i, request):
     content_type = i.split("-")[1]
     item = request.POST[i].strip()

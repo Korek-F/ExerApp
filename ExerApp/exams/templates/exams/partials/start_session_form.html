@@ -1,0 +1,5 @@
+<form hx-post="{{ exam.get_absolute_url }}" hx-swap="outerHTML">
+    {% csrf_token %} 
+    {{form}}   
+    <button type="submit">Start</button>
+</form>
