@@ -117,7 +117,6 @@ class SearchExercisesSetsView(ListView):
     
 def change_set_status(request, pk):
     if request.method =="POST":
-        print(pk)
         instance = get_object_or_404(ExerciseSet, id=pk)
         form = ExerciseSetPublicStatus(data=request.POST, instance=instance)
         if form.is_valid():

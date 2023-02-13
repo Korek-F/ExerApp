@@ -2,23 +2,32 @@
 {% block content %}
 
 <h1>{{session.exam.name}} </h1>
-<h3>Test ends at {{session.exam.end_at}}</h3>
+<p>Test ends at {{session.exam.end_at|date:"H:i:s d.m.Y"}}</p>
 
-{% if session.exam.exercise_set.number_of_points > 0 %}
-     
-    <form hx-post="{{session.get_absolute_url}}">
-        {% csrf_token %}
-        {%for exercise in session.exam.exercise_set.exercise_set.all%}
-            {{ forloop.counter }}. 
-            {%for content in exercise.content_set.all%}
-                {{content.render}}
-            {%endfor%}
-            <br />
-        {%endfor%}
+{% if not session.is_finished %}
+    {%if not is_ready%}
+        <p>Exam didn't started yet!</p>
+        <p>Wait until {{session.exam.start_at|date:"H:i:s d.m.Y"}} and then refresh the page</p>
+    {% else %}
+        {% if session.exam.exercise_set.number_of_points > 0 %}
+            <form hx-post="{{session.get_absolute_url}}">
+                {% csrf_token %}
+                {%for exercise in session.exam.exercise_set.exercise_set.all%}
+                    {{ forloop.counter }}. 
+                    {%for content in exercise.content_set.all%}
+                        {{content.render}}
+                    {%endfor%}
+                    <br />
+                {%endfor%}
 
-        <input type="submit" class="btn btn-primary mt-2 float-end" value="Check" />
-    </form>
+                <input type="submit" class="btn btn-primary mt-2 float-end" value="Check" />
+            </form>
+        {% endif %}
+    {% endif %}
+{%else%}
+    {%include 'exams/partials/session_result.html' %}
 {% endif %}
+
 
 
 

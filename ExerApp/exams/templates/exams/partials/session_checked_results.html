@@ -1,0 +1,11 @@
+<p> 
+Correct: {{correct_ratio|floatformat:1 }}%
+</p>
+<hr />
+{%for checked_answer in checked_answers%}
+    {{ forloop.counter }}. 
+    {% for content in checked_answer%}
+        {{content}}
+    {%endfor%}
+    <br />
+{%endfor%}

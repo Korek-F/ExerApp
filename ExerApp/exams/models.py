@@ -12,6 +12,9 @@ class Exam(models.Model):
     description = models.TextField(max_length=2000)
     slug = models.SlugField(unique=True)
 
+    start_at = models.DateTimeField(blank=True)
+    end_at = models.DateTimeField(blank=True)
+
     def __str__(self):
         return self.name
 
@@ -29,6 +32,7 @@ class ExamSession(models.Model):
     user_name = models.CharField(max_length=255)
     start_at = models.DateTimeField(auto_now_add=True)
     end_at = models.DateTimeField(blank=True,null=True, default=None)
+    is_finished = models.BooleanField(default=False)
     slug = models.SlugField(unique=True)
 
     def save(self, *args, **kwargs):
@@ -48,4 +52,4 @@ class SessionAnswer(models.Model):
     user_answer = models.CharField(max_length=255)
 
     def __str__(self):
-        return self.user_answer
+        return f'{self.id} {self.exam_session.user_name} {self.user_answer}'
