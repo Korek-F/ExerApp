@@ -4,6 +4,10 @@
 <h1>{{exam.name}} </h1>
 <p>{{exam.description}}</p>
 
-{% include "exams/partials/start_session_form.html"%}
+{%if is_ended%}
+    <h4>Sorry, this exam is already ended.</h4>
+{%else%}
+    {% include "exams/partials/start_session_form.html"%}
+{%endif%}
 
 {% endblock %}

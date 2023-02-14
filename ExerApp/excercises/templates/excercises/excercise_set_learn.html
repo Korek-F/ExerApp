@@ -5,6 +5,9 @@
 <div class="row">
 <h2 class="col-sm-8">{{exercise_set.name}}</h2>
 <div class="col-sm-4">
+{% if user.is_authenticated%}
+    <a class="btn btn-primary float-end" href="{% url 'create_exam' exercise_set.id %}">Create Exam</a> 
+{% endif %}
 {% if user == exercise_set.owner %}
     <a class="btn btn-primary float-end" href="{% url 'excercise_set_edit_view' exercise_set.id %}">Edit</a> 
 {% endif %}
