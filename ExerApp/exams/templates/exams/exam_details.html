@@ -1,0 +1,26 @@
+{% extends "excercises/base.html" %}
+{% block content %}
+<h1>Exam Details</h1>
+<h2>{{exam.name}}</h2>
+<p>Description: {{exam.description}}</p>
+{%if exam.start_at %}
+ Start time: {{exam.start_at}}
+ <br/>
+{%endif%}
+
+{%if exam.end_at %}
+ End time: {{exam.end_at}}
+ <br/>
+{%endif%}
+
+<h3>Sessions</h3>
+{%for session in exam.examsession_set.all%}
+    <div>
+        <div>
+            {{session.user_name}} {{session.points}}/{{exam.exercise_set.number_of_points}}
+        </div>
+
+        <a href="{% url 'session_detail_view' session.slug %}" class="btn btn-secondary ">Details</a>
+    </div>
+{%endfor%}
+{% endblock %}

@@ -1,0 +1,32 @@
+<div class="card m-3">
+    <h5 class="card-header">{{exam.created_at|date:'H:i d.m.Y'}}</h5>
+    <div class="card-body">
+        <h5 class="card-title">{{exam.name}}</h5>
+        <p class="card-text">{{exam.description}}</p>
+
+        <div class="card-footer text-muted">
+            <div class="row">
+                <div class="col sm-3">
+                    Sessions: {{exam.examsession_set.all.count}}
+                </div>
+
+                <div class="col sm-4">
+                {%if exam.start_at %}
+                    Start time: {{exam.start_at |date:'H:i d.m.Y'}}
+                {% endif %}
+                </div>
+
+                <div class="col sm-4">
+                {%if exam.end_at %}
+                    End time: {{exam.end_at |date:'H:i d.m.Y'}}
+                {% endif %}
+                </div>
+                <div class="col sm-1">
+                    <a href="{% url 'exam_owner_view' exam.slug %}" class="btn btn-secondary float-end">   
+                        Details
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

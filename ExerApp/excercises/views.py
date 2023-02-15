@@ -105,14 +105,12 @@ class ExerciseSetCreationView(LoginRequiredMixin,View):
 class SearchExercisesSetsView(ListView):
     model = ExerciseSet
     template_name = "excercises/partials/search_sets.html"
-
-
     def get_queryset(self):
         query = self.request.GET.get('q')
         object_list = ExerciseSet.objects.filter(
             Q(name__icontains=query) | Q(description__icontains=query)
             | Q(categories__name__icontains=query)
-        )
+        ).distinct()
         return object_list
     
 def change_set_status(request, pk):

@@ -1,0 +1,7 @@
+{%for exam in object_list %}
+    {%include 'exams/partials/exam_card.html' %}
+{% endfor %}
+{% if not object_list%}
+    <h2>No matches found</h2>
+{%endif%}
+

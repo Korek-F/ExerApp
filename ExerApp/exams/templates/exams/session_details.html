@@ -1,0 +1,16 @@
+{% extends "excercises/base.html" %}
+{% block content %}
+
+<h1>Session details</h1>
+<h2>{{session.user_name}}</h2>
+<p>{{correct_ratio|floatformat:1}}%</p>
+
+<h3>Answers:</h3>
+{%for checked_answer in checked_answers%}
+    {{ forloop.counter }}. 
+    {% for content in checked_answer%}
+        {{content}}
+    {%endfor%}
+    <br />
+{%endfor%}
+{% endblock %}

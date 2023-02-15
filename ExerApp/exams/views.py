@@ -4,11 +4,10 @@ from .models import Exam, ExamSession, SessionAnswer
 from excercises.models import ExerciseSet
 from excercises.models import Content
 from .forms import SessionForm, CreateExamForm
-from .utils import check_session_answers
-from excercises.utils import render_checked_exercise
-from django.utils import timezone
+from .utils import get_rendered_answers
 from django.contrib.auth.mixins import LoginRequiredMixin
-
+from django.views.generic import ListView
+from django.db.models import Q
 
 # Create your views here.
 class StartExamView(View):
@@ -19,7 +18,7 @@ class StartExamView(View):
             'form':form,
             "exam":exam,
         }
-        context["is_ended"]= exam.is_ended()
+        context["is_ended"]= exam.is_ended
         
         return render(request, 'exams/start_session.html',context)
     
@@ -43,7 +42,7 @@ class SessionView(View):
         session = get_object_or_404(ExamSession, slug=slug)
         context={
             "session":session,
-            'is_ready':session.exam.is_started()
+            'is_ready':session.exam.is_started
         }
         if session.is_finished:
             return render(request, 'exams/results.html',context)
@@ -67,18 +66,16 @@ class SessionResultsView(View):
     def get(self,request,slug):
         session = get_object_or_404(ExamSession, slug=slug)
         context={"session":session}
-        if not session.exam.is_ended:
+        if not session.exam.is_ended and session.exam.end_at:
             return render(request, 'exams/partials/exam_is_not_ended.html', context)
 
-        correct_items, wrong_items = check_session_answers(session)
-        checked_answers = []
-        for exercise in session.exam.exercise_set.exercise_set.all():
-            checked_exercise = render_checked_exercise(exercise, correct_items, wrong_items)
-            checked_answers.append(checked_exercise)
-        correct_ratio = (len(correct_items)/session.exam.exercise_set.number_of_points)*100
+        correct_items, checked_answers, correct_ratio = get_rendered_answers(session)
         context = {
             'checked_answers': checked_answers,
             "correct_ratio":correct_ratio}
+
+        session.points = len(correct_items)
+        session.save()
 
         return render(request, 'exams/partials/session_checked_results.html', context)
 
@@ -103,3 +100,42 @@ class CreateExamView(LoginRequiredMixin, View):
             context["exam"]=obj
             return render(request, 'exams/partials/exam_created.html', context)
         return render(request, 'exams/partials/create_exam_form.html', context)
+
+class ExamListView(LoginRequiredMixin,View):
+    def get(self,request):
+        return render(request, 'exams/exam_list.html')
+
+class ExamOwnerView(LoginRequiredMixin, View):
+    def get(self,request, slug):
+        exam = get_object_or_404(Exam, slug=slug)
+        if request.user != exam.owner:
+            return redirect("exercises")
+        context = {"exam":exam}
+        return render(request, 'exams/exam_details.html', context)
+
+class SessionDetailView(LoginRequiredMixin, View):
+    def get(self,request,slug):
+        session = get_object_or_404(ExamSession, slug=slug)
+        if request.user != session.exam.owner:
+            return redirect("exercises")
+
+        correct_items, checked_answers, correct_ratio = get_rendered_answers(session)
+
+        context = {"session":session,
+        "checked_answers":checked_answers,
+        "correct_ratio":correct_ratio}
+
+        return render(request, 'exams/session_details.html', context)
+    
+class SearchExamsView(ListView):
+    model = Exam
+    template_name = "exams/partials/searched_exams.html"
+    
+
+    def get_queryset(self):
+        query = self.request.GET.get('q')
+        object_list = Exam.objects.filter(
+            Q(name__icontains=query) | Q(description__icontains=query)
+        ).distinct()
+        print(object_list)
+        return object_list
