@@ -1,7 +1,10 @@
-{%for exercise_set in object_list %}
-    {%include 'excercises/partials/exercise_set_card.html' %}
-{% endfor %}
-{% if not object_list%}
-    <h2>No matches found</h2>
-{%endif%}
+{% include 'excercises/partials/pagination.html' %}
+<div class="row"> 
+    {%for exercise_set in page_obj %}
+        {%include 'excercises/partials/exercise_set_card.html' %}
+    {% endfor %}
+    {% if not page_obj%}
+        <h2>No matches found</h2>
+    {%endif%}
+</div>
 

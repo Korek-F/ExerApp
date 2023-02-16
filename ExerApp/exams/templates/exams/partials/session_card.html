@@ -1,0 +1,19 @@
+<div class="card  col-sm-3">
+    <div class="card-body">
+      <h5 class="card-title">{{session.user_name}}</h5>
+      <hr />
+      <h6 class="card-subtitle mb-2 text-muted">
+        {% if session.is_late %}
+            Finished after deadline!
+        {%else%}
+            {{session.end_at|date:"H:i d.m.Y"}}
+        {%endif%}
+      </h6>
+      <p class="card-text">Points: 
+        {{session.points}}/{{exam.exercise_set.number_of_points}}
+        </p>
+
+      
+      <a href="{% url 'session_detail_view' session.slug %}" class="btn btn-secondary float-end">Details</a>
+    </div>
+</div>

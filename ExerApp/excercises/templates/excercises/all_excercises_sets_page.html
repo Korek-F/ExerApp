@@ -19,13 +19,19 @@ class="mt-4" >
     </div>
 </form>
 
-<hr />
 
-<div class="row" id="ex-box"> 
-{%for exercise_set in exercises_sets%}
-    {%include 'excercises/partials/exercise_set_card.html' %}
-{%endfor%}
+
+
+<hr />
+<div id="ex-box">
+    {% include 'excercises/partials/pagination.html' %}
+    <div class="row"> 
+        {%for exercise_set in page_obj%}
+            {%include 'excercises/partials/exercise_set_card.html' %}
+        {%endfor%}
+    </div>
 </div>
+
 
 
 {% endblock %}

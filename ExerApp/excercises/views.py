@@ -8,15 +8,42 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse
 from django.contrib import messages
 from categories.forms import CreateCategoryForm
-from .utils import create_content, render_checked_exercise, check_ansewers
+from .utils import create_content, render_checked_exercise, check_ansewers, get_page_obj, get_page_url
 from django.db.models import Q 
+from django.core.paginator import Paginator
 
 
 class AllExercisesSets(View):
     def get(self, request, *args, **kwargs):
         exercises_sets = ExerciseSet.objects.all().filter(is_public=True)
-        context = {'exercises_sets': exercises_sets}
+        page_num = request.GET.get('page', 1)
+        paginator = Paginator(exercises_sets, 3)
+        page_obj = get_page_obj(page_num, paginator)
+        page_url = get_page_url(request, "search_exercises_sets")
+
+        context = {'page_obj': page_obj,"page_url":page_url}
         return render(request, 'excercises/all_excercises_sets_page.html', context)
+
+
+class SearchExercisesSetsView(View):
+    def get(self, request):
+        query = self.request.GET.get('q')
+        if query:
+            exercises_sets = ExerciseSet.objects.filter(
+            Q(name__icontains=query) | Q(description__icontains=query)
+            | Q(categories__name__icontains=query)).filter(is_public=True).distinct()
+        else:
+            exercises_sets = ExerciseSet.objects.all().filter(is_public=True)
+
+        page_num = request.GET.get('page', 1)
+        paginator = Paginator(exercises_sets, 3)
+        page_obj = get_page_obj(page_num, paginator)
+        page_url = get_page_url(request, "search_exercises_sets")
+
+
+        context = {"page_obj":page_obj,"page_url":page_url, "qs":query}
+
+        return render(request,"excercises/partials/search_sets.html", context)
 
 
 class ExerciseSetEditView(LoginRequiredMixin,View):
@@ -102,16 +129,7 @@ class ExerciseSetCreationView(LoginRequiredMixin,View):
         return render(request, 'excercises/exercise_set_create.html',context)
 
 
-class SearchExercisesSetsView(ListView):
-    model = ExerciseSet
-    template_name = "excercises/partials/search_sets.html"
-    def get_queryset(self):
-        query = self.request.GET.get('q')
-        object_list = ExerciseSet.objects.filter(
-            Q(name__icontains=query) | Q(description__icontains=query)
-            | Q(categories__name__icontains=query)
-        ).distinct()
-        return object_list
+
     
 def change_set_status(request, pk):
     if request.method =="POST":

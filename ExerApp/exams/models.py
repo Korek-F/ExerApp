@@ -38,6 +38,7 @@ class Exam(models.Model):
         if not self.start_at:
             return True
         return self.start_at<timezone.now()
+
         
 
 
@@ -50,10 +51,20 @@ class ExamSession(models.Model):
     slug = models.SlugField(unique=True, blank=True)
     points = models.IntegerField(default=0)
 
+    @property 
+    def is_late(self):
+        if not self.is_finished:
+            return False
+        if self.exam.end_at and self.end_at and self.end_at> self.exam.end_at:
+            return True 
+        return False
+
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.user_name)+str(random.randint(0,1000000))
         super(ExamSession, self).save(*args, **kwargs)
+
+
 
     def __str__(self):
         return self.user_name

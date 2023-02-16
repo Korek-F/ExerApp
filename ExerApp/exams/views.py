@@ -8,6 +8,7 @@ from .utils import get_rendered_answers
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import ListView
 from django.db.models import Q
+from django.utils import timezone
 
 # Create your views here.
 class StartExamView(View):
@@ -59,6 +60,7 @@ class SessionView(View):
                 answer = request.POST[i].strip()
                 SessionAnswer.objects.create(exam_session=session, item=obj, user_answer=answer)
         session.is_finished = True 
+        session.end_at = timezone.now()
         session.save()
         return render(request, 'exams/partials/session_result.html',context)
 
@@ -137,5 +139,4 @@ class SearchExamsView(ListView):
         object_list = Exam.objects.filter(
             Q(name__icontains=query) | Q(description__icontains=query)
         ).distinct()
-        print(object_list)
         return object_list

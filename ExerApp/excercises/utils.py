@@ -2,6 +2,10 @@ from .models import Content, Text,BlankText,ABCD,Hint
 from django.contrib.contenttypes.models import ContentType
 from django.template.loader import render_to_string
 from django.shortcuts import get_object_or_404
+from django.core.paginator import  EmptyPage, PageNotAnInteger
+from django.urls import reverse
+from django.contrib.sites.shortcuts import get_current_site
+
 
 def create_content(current_ex,i, request):
     content_type = i.split("-")[1]
@@ -56,5 +60,17 @@ def check_ansewers(request):
     return correct_items, wrong_items
 
 
+def  get_page_obj(page_num, paginator):
+   
+    try:
+        page_obj = paginator.page(page_num)
+    except PageNotAnInteger:
+        page_obj = paginator.page(1)
+    except EmptyPage:
+        page_obj = paginator.page(paginator.num_pages)
+    return page_obj
 
-    
+def get_page_url(request, name):
+    current_site = get_current_site(request).domain
+    relativeLink = reverse(name)
+    return 'http://'+current_site+relativeLink
