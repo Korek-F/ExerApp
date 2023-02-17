@@ -28,6 +28,11 @@ h1 {
 .btn-primary {
     background-color: #506A88 !important;
     border-color: #40556d !important;
+    min-width: 10rem;
+}
+
+.btn-secondary {
+    min-width: 10rem !important;
 }
 
 .container {

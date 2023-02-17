@@ -22,6 +22,6 @@
     <form hx-post="{% url 'add_cat_to_set' exercise_set.id%}" hx-target="#add-category-form">
         {%csrf_token%}
         {{form|crispy}}
-        <input type="submit" value="Add" class="btn btn-primary mt-2 float-end"/>
+        <input type="submit" value="Add" class="btn btn-secondary mt-2 float-end"/>
     </form>
 </div>
