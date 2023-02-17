@@ -1,6 +1,41 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
+
+
 body {
     background-color: #a1cece;
     /*#a1cece;*/
+}
+
+h1 {
+    font-family: 'Bebas Neue', cursive;
+    color: #506A88;
+}
+
+.my-navbar {
+    background-color: #506A88 !important;
+}
+
+.my-navbar a {
+    color: #FAF8F6 !important;
+    font-weight: 600;
+}
+
+.my-navbar a:hover {
+    color: #a1cece !important;
+    font-weight: 700;
+}
+
+.btn-primary {
+    background-color: #506A88 !important;
+    border-color: #40556d !important;
+}
+
+.container {
+    margin-top: 1rem;
+    background-color: rgba(255, 255, 255, 0.301);
+    min-height: 90vh;
+    border-radius: 10px;
+    padding: 1rem;
 }
 
 .disappear-box {
@@ -73,14 +108,9 @@ body {
     border: 6px solid transparent;
 }
 
-.my-navbar {
-    background-color: #5B7EFF !important;
 
-}
 
-.my-navbar a {
-    color: #F5D7C8 !important;
-}
+
 
 
 .exercise-edit-info {

@@ -1,9 +1,9 @@
 {% extends "excercises/base.html" %}
 {% block content %}
-<h1 class="mt-4">Your exams</h1>
+<h1 >Your exams</h1>
 
 <form hx-get="{% url 'exam_search' %}" 
-hx-target="#exams" class="mt-4" >
+hx-target="#ex-box" class="mt-4" >
     <div class="row">
         <div class="col-sm-10">
             <input name='q' class="form-control" type='text' 
@@ -17,10 +17,12 @@ hx-target="#exams" class="mt-4" >
     </div>
 </form>
 
-<div id="exams">
-{%for exam in user.exam_set.all%}
-    {% include 'exams/partials/exam_card.html'%}
-{%endfor%}
+<hr />
+<div id="ex-box">
+    {% include 'excercises/partials/pagination.html' %}
+    {%for exam in page_obj%}
+        {% include 'exams/partials/exam_card.html'%}
+    {%endfor%}
 </div>
 
 

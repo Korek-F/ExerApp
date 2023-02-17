@@ -1,7 +1,9 @@
-{%for exam in object_list %}
-    {%include 'exams/partials/exam_card.html' %}
+
+{% include 'excercises/partials/pagination.html' %}
+{%for exam in page_obj %}
+    {% include 'exams/partials/exam_card.html' %}
 {% endfor %}
-{% if not object_list%}
+{% if not page_obj%}
     <h2>No matches found</h2>
 {%endif%}
 

@@ -1,11 +1,11 @@
 {% extends "excercises/base.html" %}
 {%load crispy_forms_tags %}
 {% block content %}
-<h2>Login</h2>
+<h1>Login</h1>
 
 <form action="{% url 'logout' %}" method="post">
 {% csrf_token %}
-<span>Are you sure you want to logout?</span>
-<input type="submit" class="btn btn-primary mt-2" value="Logout"/>
+<h3>Are you sure you want to logout?</h3>
+<input type="submit" class="btn btn-primary mt-2 float-end" value="Logout"/>
 <form>
 {% endblock %}

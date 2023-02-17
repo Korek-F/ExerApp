@@ -6,9 +6,10 @@ from excercises.models import Content
 from .forms import SessionForm, CreateExamForm
 from .utils import get_rendered_answers
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import ListView
+from excercises.utils import get_page_obj, get_page_url
 from django.db.models import Q
 from django.utils import timezone
+from django.core.paginator import Paginator
 
 # Create your views here.
 class StartExamView(View):
@@ -105,7 +106,32 @@ class CreateExamView(LoginRequiredMixin, View):
 
 class ExamListView(LoginRequiredMixin,View):
     def get(self,request):
-        return render(request, 'exams/exam_list.html')
+        exams = request.user.exam_set.all()
+        page_num = request.GET.get('page', 1)
+        paginator = Paginator(exams, 12)
+        page_obj = get_page_obj(page_num, paginator)
+        page_url = get_page_url(request, "exam_search")
+        context = {"page_obj":page_obj,"page_url":page_url}
+        return render(request, 'exams/exam_list.html', context)
+
+class SearchExamsView(View):
+    def get(self,request):
+        query = self.request.GET.get('q')
+        exams = request.user.exam_set.all()
+       
+        if query:
+            exams = exams.filter(
+            Q(name__icontains=query) | Q(description__icontains=query)).distinct()
+        
+        page_num = request.GET.get('page', 1)
+        paginator = Paginator(exams, 12)
+        page_obj = get_page_obj(page_num, paginator)
+        page_url = get_page_url(request, "exam_search")
+
+        context = {"page_obj":page_obj,"page_url":page_url, "qs":query}
+        return render(request,"exams/partials/searched_exams.html",context)
+
+        
 
 class ExamOwnerView(LoginRequiredMixin, View):
     def get(self,request, slug):
@@ -129,14 +155,7 @@ class SessionDetailView(LoginRequiredMixin, View):
 
         return render(request, 'exams/session_details.html', context)
     
-class SearchExamsView(ListView):
-    model = Exam
-    template_name = "exams/partials/searched_exams.html"
+
+
     
 
-    def get_queryset(self):
-        query = self.request.GET.get('q')
-        object_list = Exam.objects.filter(
-            Q(name__icontains=query) | Q(description__icontains=query)
-        ).distinct()
-        return object_list

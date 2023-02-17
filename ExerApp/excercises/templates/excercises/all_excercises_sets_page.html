@@ -1,7 +1,7 @@
 {% extends "excercises/base.html" %}
 {% block content %}
 
-<h1 class="mt-4">Exercise sets</h1>
+<h1>Exercise sets</h1>
 
 <form hx-get="{% url 'search_exercises_sets' %}" 
 hx-target="#ex-box"
@@ -18,9 +18,6 @@ class="mt-4" >
         </div>
     </div>
 </form>
-
-
-
 
 <hr />
 <div id="ex-box">

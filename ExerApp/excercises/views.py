@@ -17,7 +17,7 @@ class AllExercisesSets(View):
     def get(self, request, *args, **kwargs):
         exercises_sets = ExerciseSet.objects.all().filter(is_public=True)
         page_num = request.GET.get('page', 1)
-        paginator = Paginator(exercises_sets, 3)
+        paginator = Paginator(exercises_sets, 12)
         page_obj = get_page_obj(page_num, paginator)
         page_url = get_page_url(request, "search_exercises_sets")
 
@@ -36,7 +36,7 @@ class SearchExercisesSetsView(View):
             exercises_sets = ExerciseSet.objects.all().filter(is_public=True)
 
         page_num = request.GET.get('page', 1)
-        paginator = Paginator(exercises_sets, 3)
+        paginator = Paginator(exercises_sets, 12)
         page_obj = get_page_obj(page_num, paginator)
         page_url = get_page_url(request, "search_exercises_sets")
 
