@@ -3,7 +3,25 @@
 
 <h1>Session details</h1>
 <h2>{{session.user_name}}</h2>
-<p>{{correct_ratio|floatformat:1}}%</p>
+<div class="row text-center">
+    <div class="col-sm-4">
+        <p>Correct: {{correct_ratio|floatformat:1}}%</p>
+    </div>
+    <div class="col-sm-4">
+        <p>Finished at: {{session.end_at|date:"H:i d.m.Y"}}</p>
+    </div>
+    <div class="col-sm-4">
+        {%if session.is_late %}
+        <span style="color:#c23b22;">
+            The session ended after the deadline
+        </span>
+        {% elif session.is_finished%}
+            The session is not finished yet!
+        {% else %}
+            The session is finished
+        {%endif%}
+    </div>
+</div>
 
 <h3>Answers:</h3>
 {%for checked_answer in checked_answers%}

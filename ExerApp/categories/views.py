@@ -38,7 +38,7 @@ def add_category_to_set(request, set_id):
 
 class AllCategoriesView(View):
     def get(self,request):
-        categories = Category.objects.all()
+        categories = Category.objects.all().filter(popularity__gt=0)
         context = {"categories":categories}
         return render(request, "categories/all_categories.html", context)
 
@@ -58,7 +58,9 @@ class SearchCategoriesView(ListView):
         query = self.request.GET.get('q')
         object_list = Category.objects.filter(
             Q(name__icontains=query) 
-        )
+        ).filter(popularity__gt=0)
+        item_order = self.request.GET.get('item_order','popularity')
+        object_list.order_by(item_order)
         return object_list
 
 

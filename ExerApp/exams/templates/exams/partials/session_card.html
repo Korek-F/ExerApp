@@ -3,10 +3,14 @@
       <h5 class="card-title">{{session.user_name}}</h5>
       <hr />
       <h6 class="card-subtitle mb-2 text-muted">
-        {% if session.is_late %}
-            Finished after deadline!
-        {%else%}
-            {{session.end_at|date:"H:i d.m.Y"}}
+        {%if session.is_late %}
+        <span style="color:#c23b22;">
+            The session ended after the deadline
+        </span>
+        {% elif session.is_finished%}
+            The session is not finished yet!
+        {% else %}
+            The session is finished
         {%endif%}
       </h6>
       <p class="card-text">Points: 

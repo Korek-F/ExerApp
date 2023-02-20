@@ -74,6 +74,7 @@ class SessionResultsView(View):
 
         correct_items, checked_answers, correct_ratio = get_rendered_answers(session)
         context = {
+            "session":session,
             'checked_answers': checked_answers,
             "correct_ratio":correct_ratio}
 
@@ -122,6 +123,8 @@ class SearchExamsView(View):
         if query:
             exams = exams.filter(
             Q(name__icontains=query) | Q(description__icontains=query)).distinct()
+        
+        exams = exams.order_by(request.GET.get("item_order","-created_at"))
         
         page_num = request.GET.get('page', 1)
         paginator = Paginator(exams, 12)

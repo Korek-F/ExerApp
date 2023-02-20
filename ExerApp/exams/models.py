@@ -16,6 +16,9 @@ class Exam(models.Model):
     end_at = models.DateTimeField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        ordering = ['-created_at','name']
+
     def __str__(self):
         return self.name
 

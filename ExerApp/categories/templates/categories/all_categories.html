@@ -5,8 +5,14 @@
 <form hx-get="{% url 'search_categories' %}" class="mt-4" 
 hx-target="#categories-box">
     <div class="row">
-        <div class="col-sm-10">
+        <div class="col-sm-7">
             <input name='q' class="form-control" type='text' placeholder="Category name" />
+        </div>
+        <div class="col-sm-3">
+            <select name="item_order" class="form-control">
+                <option value="-popularity">Most Popular</option>
+                <option value="popularity">Less Popular</option>
+            </select>
         </div>
         <div class="col-sm-2">
             <button type="submit" 

@@ -1,5 +1,6 @@
+{%load crispy_forms_tags %}
 <form hx-post="{{ exam.get_absolute_url }}" hx-swap="outerHTML">
     {% csrf_token %} 
-    {{form}}   
-    <button type="submit">Start</button>
+    {{form|crispy}}   
+    <button type="submit" class="btn btn-primary float-end mt-2">Start</button>
 </form>

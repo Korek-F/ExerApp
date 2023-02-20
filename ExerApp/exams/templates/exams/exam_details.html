@@ -15,6 +15,7 @@
         End time: {{exam.end_at}}
         <br/>
         {%endif%}
+        <a href="{{exam.get_absolute_url}}" class="btn btn-secondary mt-2">Start</a>
     </div>
 
         {% include 'excercises/partials/exercise_set_card.html' with exercise_set=exam.exercise_set %}

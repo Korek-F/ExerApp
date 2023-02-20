@@ -1,6 +1,19 @@
-<p> 
-Correct: {{correct_ratio|floatformat:1 }}%
-</p>
+<div class="row mt-2"> 
+    <div class="col-sm-4">
+    Correct: {{correct_ratio|floatformat:1 }}%
+    </div>
+    <div class="col-sm-4">
+     {%if session.is_late %}
+        <span style="color:#c23b22;">
+            The session ended after the deadline
+        </span>
+     {% elif session.is_finished%}
+        The session is not finished yet!
+     {% else %}
+        The session is finished
+     {%endif%}
+    </div>
+</div>
 <hr />
 {%for checked_answer in checked_answers%}
     {{ forloop.counter }}. 

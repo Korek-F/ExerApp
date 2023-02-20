@@ -16,6 +16,7 @@ from django.core.paginator import Paginator
 class AllExercisesSets(View):
     def get(self, request, *args, **kwargs):
         exercises_sets = ExerciseSet.objects.all().filter(is_public=True)
+
         page_num = request.GET.get('page', 1)
         paginator = Paginator(exercises_sets, 12)
         page_obj = get_page_obj(page_num, paginator)
@@ -35,6 +36,7 @@ class SearchExercisesSetsView(View):
         else:
             exercises_sets = ExerciseSet.objects.all().filter(is_public=True)
 
+        exercises_sets = exercises_sets.order_by(request.GET.get('item_order','-creation_date'))
         page_num = request.GET.get('page', 1)
         paginator = Paginator(exercises_sets, 12)
         page_obj = get_page_obj(page_num, paginator)
