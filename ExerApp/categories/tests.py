@@ -28,8 +28,9 @@ class TestCategoriesViews(TestCase):
         response = self.c.get(reverse('all_categories'))
         self.assertEqual(response.status_code, 200)
         self.assertNotContains(response, "test_category_1")
-        Category.objects.create(name="test_category_1")
-
+        c=Category.objects.create(name="test_category_1")
+        c.popularity=1
+        c.save()
         response = self.c.get(reverse('all_categories'))
         self.assertContains(response, "test_category_1")
     
