@@ -6,6 +6,6 @@
 <form action="{% url 'login' %}" method="POST">
     {% csrf_token %}
 {{form|crispy}}
-<input type="submit" class="btn btn-primary mt-2" value="Login"/>
+<input type="submit" class="btn btn-primary mt-2 float-end" value="Login"/>
 <form>
 {% endblock %}

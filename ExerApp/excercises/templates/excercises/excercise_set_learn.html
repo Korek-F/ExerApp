@@ -22,8 +22,8 @@
 <p>Number of points to achieve: {{exercise_set.number_of_points}}</p>
 
 <div class="m-4">
-    <h4>Check your self!</h4>
     {% if exercise_set.number_of_points > 0 %}
+    <h4>Check your self!</h4>
     <form method="POST" action="{% url 'excercise_set_check_view' exercise_set.id%}">
             {%for exercise in exercise_set.exercise_set.all%}
                 {{ forloop.counter }}. 
@@ -36,6 +36,9 @@
         {% csrf_token %} 
         <input type="submit" class="btn btn-primary mt-2 float-end" value="Check" />
     </form> 
+    {%else%}
+    <h4>There is no content yet!</h4>
+    {% endif %}
 </div>
-{% endif %}
+
 {% endblock %}

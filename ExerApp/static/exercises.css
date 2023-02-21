@@ -30,6 +30,9 @@ h1 {
     border-color: #40556d !important;
 }
 
+.btn {
+    min-width: 8rem;
+}
 
 
 
