@@ -92,7 +92,6 @@ class TestExercisesViews(TestCase):
         #edit
         response = self.c.get(reverse('excercise_set_edit_view',kwargs={"set_id":1}))
         
-        print(response)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "set1-ex-abc")
         self.assertNotContains(response, "set2")

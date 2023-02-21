@@ -17,6 +17,8 @@ class ExerciseSet(models.Model):
     is_public = models.BooleanField(default=False)
     categories = models.ManyToManyField(Category, blank=True)
 
+    class Meta:
+        ordering = ['-creation_date']
 
     @property
     def number_of_points(self):
