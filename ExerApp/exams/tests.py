@@ -31,6 +31,7 @@ class TestExamViews(TestCase):
         
         self.c.login(username='john',password='johnhardpassowrd1')
 
+        #Create exercise set with content 
         self.exercise_set = ExerciseSet.objects.create(name="TestName", owner=self.user, description="TEST")
         self.exercise = Exercise.objects.create(exercise_set=self.exercise_set)
         content_item = Text.objects.create(content="TEST")
@@ -40,11 +41,51 @@ class TestExamViews(TestCase):
         cc = ContentType.objects.get_for_model(ABCD)
         Content.objects.create(exercise=self.exercise, content_type=cc,object_id=content_item.id)
     
-    def test_create_exam_view(self):
+    def test_create_exam_session_views(self):
+        #create session get
         response = self.c.get(reverse('create_exam',kwargs={"id":1}))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Create')
-
-
+    
+        #create session post
         response = self.c.post(reverse('create_exam',kwargs={"id":1}),{"name":"Quick test","description":"aaa"})
+        self.assertContains(response, 'Link to exam')
         self.assertEqual(response.status_code,200)
+        exam = Exam.objects.first()
+        self.assertEqual(exam.name,"Quick test")
+
+        #session start get 
+        response = self.c.get(reverse('exam',kwargs={"slug":exam.slug}))
+        self.assertEqual(response.status_code,200)
+        self.assertContains(response, exam.name)
+        
+        #session start post
+        response = self.c.post(reverse('exam',kwargs={"slug":exam.slug}),{"user_name":"JohnyBravo"})
+        self.assertEqual(response.status_code,200)
+        self.assertContains(response, "Start Session")
+
+        session = ExamSession.objects.get(id=1)
+        self.assertEqual(session.user_name,"JohnyBravo")
+
+        #session get 
+        response = self.c.get(reverse('session',kwargs={"slug":session.slug}))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "cracow")
+
+        #session post
+        response = self.c.post(reverse('session',kwargs={"slug":session.slug}),{"answer_abcd_1":"warsaw"})
+        answer = SessionAnswer.objects.get(id=1)
+
+        session = ExamSession.objects.get(id=1)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(answer.exam_session.is_finished, session.is_finished)
+        self.assertEqual(session.is_finished, True)
+        self.assertIsNotNone(session.end_at)
+        self.assertEqual(answer.user_answer, "warsaw")
+        self.assertContains(response, "Session finished")
+
+        #session results get
+        response = self.c.get(reverse('session_results',kwargs={"slug":session.slug}))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "The session is finished")
+        self.assertContains(response, "Correct: 100.0%")

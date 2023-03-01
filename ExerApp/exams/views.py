@@ -60,6 +60,7 @@ class SessionView(View):
                 obj = get_object_or_404(Content, pk=obj_id)
                 answer = request.POST[i].strip()
                 SessionAnswer.objects.create(exam_session=session, item=obj, user_answer=answer)
+        
         session.is_finished = True 
         session.end_at = timezone.now()
         session.save()
