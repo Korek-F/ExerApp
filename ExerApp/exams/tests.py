@@ -1,4 +1,4 @@
-from django.test import TestCase, Client
+from django.test import TestCase, Client,TransactionTestCase
 from .models import Exam, ExamSession, SessionAnswer
 from excercises.models import ExerciseSet, Exercise,Content,Text,ABCD
 from django.contrib.contenttypes.models import ContentType
@@ -24,7 +24,7 @@ class TestExamModels(TestCase):
         self.assertEqual(session.is_finished,False)
         self.assertEqual(session.points,0)
 
-class TestExamViews(TestCase):
+class TestExamViews(TransactionTestCase):
     def setUp(self):
         self.c = Client()
         self.user = User.objects.create_user('john','john@elek.pl','johnhardpassowrd1')
@@ -89,3 +89,23 @@ class TestExamViews(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "The session is finished")
         self.assertContains(response, "Correct: 100.0%")
+
+        #Exam list view
+        response = self.c.get(reverse('exam_list'))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Quick test")
+        self.assertContains(response, "1/1")
+        
+        #exam details view
+        response = self.c.get(reverse('exam_owner_view',kwargs={'slug':exam.slug}))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "JohnyBravo")
+        self.assertContains(response, "The session is finished")
+        self.assertContains(response, "Points: ")
+
+        #session details view
+        response = self.c.get(reverse('session_detail_view',kwargs={'slug':session.slug}))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Answers")
+        self.assertContains(response, "warsaw")
+    
